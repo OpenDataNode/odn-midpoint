@@ -23,8 +23,8 @@
             <repositoryServiceFactoryClass>com.evolveum.midpoint.repo.sql.SqlRepositoryFactory</repositoryServiceFactoryClass>
             <embedded>false</embedded>
             <driverClassName>org.postgresql.Driver</driverClassName>
-            <jdbcUsername>midpoint</jdbcUsername>
-            <jdbcPassword>odn.eea.sso</jdbcPassword>
+            <jdbcUsername>USERNAME</jdbcUsername>
+            <jdbcPassword>PASSWORD</jdbcPassword>
             <jdbcUrl>jdbc:postgresql://localhost/midpoint</jdbcUrl>
             <hibernateDialect>com.evolveum.midpoint.repo.sql.util.MidPointPostgreSQLDialect</hibernateDialect>
             <hibernateHbm2ddl>validate</hibernateHbm2ddl>
