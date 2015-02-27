@@ -641,7 +641,7 @@
         <profile>        
             <id>debian</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
 
             <build>
@@ -673,6 +673,7 @@
                                                 <type>perm</type>
                                                 <prefix>/var/lib/midpoint.home</prefix>
                                                 <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <data>
@@ -682,15 +683,63 @@
                                                 <type>perm</type>
                                                 <prefix>/usr/share/odn-midpoint</prefix>
                                                 <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <data>
-                                            <src>${project.build.directory}/midpoint</src>
-                                            <type>directory</type>
+                                            <type>link</type>
+                                            <linkName>/usr/share/odn-midpoint/conf</linkName>
+                                            <linkTarget>/etc/odn-midpoint</linkTarget>
+                                            <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <prefix>/usr/share/odn-midpoint/webapps/midpoint</prefix>
                                                 <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>                                        
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/usr/share/odn-midpoint/logs</linkName>
+                                            <linkTarget>/var/log/odn-midpoint/</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>   
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/usr/share/odn-midpoint/work</linkName>
+                                            <linkTarget>/var/cache/odn-midpoint/</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>   
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/usr/share/odn-midpoint/temp</linkName>
+                                            <linkTarget>/var/tmp/</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>                                           
+                                        <data>
+                                            <type>template</type>
+                                            <paths>
+                                                <path>/var/cache/odn-midpoint/</path>
+                                                <path>/var/log/odn-midpoint/</path>
+                                            </paths>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                     </dataSet>
