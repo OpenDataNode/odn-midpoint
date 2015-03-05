@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2013 Evolveum
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+
+    <global-method-security secured-annotations="enabled"/>
+
+	<!-- Web services have their own authentication and authorization using CXF interceptors. -->
+    <http pattern="/model/**" security="none"/>
+    <http pattern="/ws/**" security="none"/>
+    
+    <!-- REST services have their own authentication and authorization. -->
+    <http pattern="/rest/**" security="none"/>
+
+    <http pattern="/js/**" security="none"/>
+    <http pattern="/css/**" security="none"/>
+    <http pattern="/img/**" security="none"/>
+    <http pattern="/wro/**" security="none"/>
+    <!-- todo fix later with some mounting-->
+    <http pattern="/wicket/resource/**" security="none"/>
+
+	<!-- add following: entry-point-ref="casEntryPoint"  to the http element before create-session attribute -->
+    <http entry-point-ref="casEntryPoint" create-session="never" auto-config="true" use-expressions="false" access-decision-manager-ref="accessDecisionManager">
+        <intercept-url pattern="/j_spring_security_check" />
+        <intercept-url pattern="/spring_security_login" />
+
+        <intercept-url pattern="/login"/>
+
+        <intercept-url pattern="/bootstrap" />
+        
+
+        <intercept-url pattern="/admin/**" access="isFullyAuthenticated()"/>  <!--  access="isAuthenticated()"/> -->
+
+<!--        <logout logout-url="/j_spring_security_logout" invalidate-session="true" success-handler-ref="logoutHandler" /> -->
+        <session-management>
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
+        </session-management>
+
+		<!-- For SSO integration use the following: -->
+        <!-- <custom-filter position="PRE_AUTH_FILTER" ref="requestHeaderAuthenticationFilter" />  -->
+		
+		<!-- For SSO CAS integration uncomment  following -->
+		<custom-filter position="CAS_FILTER" ref="casFilter" />
+		<logout logout-success-url="/"/>
+		<custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
+		<custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>
+		
+        <form-login login-page="/login" default-target-url="/home" />
+        <intercept-url pattern="/**" access="isFullyAuthenticated()"/> 
+    </http>
+
+    <beans:bean id="accessDecisionManager" class="com.evolveum.midpoint.web.security.MidPointGuiAuthorizationEvaluator">
+    	<beans:constructor-arg name="securityEnforcer" ref="securityEnforcer"/>
+    </beans:bean>
+    
+    <beans:bean id="logoutHandler" class="com.evolveum.midpoint.web.security.AuditedLogoutHandler">
+        <beans:property name="defaultTargetUrl" value="/"/>
+    </beans:bean>
+
+    <beans:bean id="midPointAuthenticationProvider"
+                class="com.evolveum.midpoint.web.security.MidPointAuthenticationProvider">
+        <beans:property name="loginTimeout">
+            <beans:value type="java.lang.Integer">15</beans:value>
+        </beans:property>
+        <beans:property name="maxFailedLogins">
+            <beans:value type="java.lang.Integer">3</beans:value>
+        </beans:property>
+    </beans:bean>
+    
+    <!-- Following bean is used with pre-authentication based on HTTP headers (e.g. for SSO integration) -->
+    <beans:bean id="requestHeaderAuthenticationFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+	    <beans:property name="principalRequestHeader" value="SM_USER"/>
+	    <beans:property name="authenticationManager" ref="authenticationManager" />
+	</beans:bean>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="midPointAuthenticationProvider"/>
+    </authentication-manager>
+	
+	<!-- For SSO CAS integration uncomment following and set CASSERVER address-->
+	<!-- CAS CONFIG -->
+	<beans:bean id="serviceProperties"
+        class="org.springframework.security.cas.ServiceProperties">
+    <beans:property name="service"
+        value="http://sso.odn.in.eea.sk:18080/midpoint/j_spring_cas_security_check"/>
+    <beans:property name="sendRenew" value="false"/>
+  </beans:bean>
+  
+  <beans:bean id="casFilter"
+        class="org.springframework.security.cas.web.CasAuthenticationFilter">
+    <beans:property name="authenticationManager" ref="authenticationManager"/>
+  </beans:bean>
+
+  <beans:bean id="casEntryPoint"
+      class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+    <beans:property name="loginUrl" value="https://sso.odn.in.eea.sk:18443/cas/login"/>
+    <beans:property name="serviceProperties" ref="serviceProperties"/>
+  </beans:bean>
+  
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider ref="casAuthenticationProvider" />
+  </authentication-manager>
+
+  <beans:bean id="casAuthenticationProvider"
+      class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+    <beans:property name="authenticationUserDetailsService">
+      <beans:bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+        <beans:constructor-arg ref="userDetailsService" />
+      </beans:bean>
+    </beans:property>
+    <beans:property name="serviceProperties" ref="serviceProperties" />
+    <beans:property name="ticketValidator">
+      <beans:bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+        <beans:constructor-arg index="0" value="https://sso.odn.in.eea.sk:18443/cas" />
+      </beans:bean>
+    </beans:property>
+    <beans:property name="key" value="CAS_ID"/>
+  </beans:bean>
+  
+	<!-- For SLO CAS integration uncomment following and set CASSERVER address-->
+	<!-- LOGOUT -->
+	
+  <!-- This filter handles a Single Logout Request from the CAS Server -->
+<beans:bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/> 
+  <!-- This filter redirects to the CAS Server to signal Single Logout should be performed -->
+ <beans:bean id="requestSingleLogoutFilter"
+        class="org.springframework.security.web.authentication.logout.LogoutFilter">
+    <beans:constructor-arg value="https://sso.odn.in.eea.sk:18443/cas/logout"/>
+    <beans:constructor-arg>
+      <beans:bean class=
+          "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+    </beans:constructor-arg>
+    <beans:property name="filterProcessesUrl" value="/j_spring_cas_security_logout"/>
+  </beans:bean>
+  
+  
+</beans:beans>
