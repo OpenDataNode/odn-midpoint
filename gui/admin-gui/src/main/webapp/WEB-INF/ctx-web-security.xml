@@ -41,7 +41,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     <http pattern="/wicket/resource/**" security="none"/>
 
 	<!-- add following: entry-point-ref="casEntryPoint"  to the http element before create-session attribute -->
-    <http entry-point-ref="casEntryPoint" create-session="never" auto-config="true" use-expressions="false" access-decision-manager-ref="accessDecisionManager">
+    <http create-session="never" auto-config="true" use-expressions="false" access-decision-manager-ref="accessDecisionManager">
         <intercept-url pattern="/j_spring_security_check" />
         <intercept-url pattern="/spring_security_login" />
 
@@ -62,8 +62,9 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		
 		<!-- For SSO CAS integration uncomment  following -->
 		<custom-filter position="CAS_FILTER" ref="casFilter" />
-		<logout logout-success-url="/"/>
+		<logout logout-success-url="/cas-logout.jsp"/>
 		<custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
+
 		<custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>
 		
         <form-login login-page="/login" default-target-url="/home" />
@@ -103,7 +104,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 	<beans:bean id="serviceProperties"
         class="org.springframework.security.cas.ServiceProperties">
     <beans:property name="service"
-        value="http://sso.odn.in.eea.sk:18080/midpoint/j_spring_cas_security_check"/>
+        value="http://localhost:8080/midpoint/j_spring_cas_security_check"/>
     <beans:property name="sendRenew" value="false"/>
   </beans:bean>
   
@@ -114,7 +115,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
   <beans:bean id="casEntryPoint"
       class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
-    <beans:property name="loginUrl" value="https://sso.odn.in.eea.sk:18443/cas/login"/>
+    <beans:property name="loginUrl" value="https://CASSERVER/cas/login"/>
     <beans:property name="serviceProperties" ref="serviceProperties"/>
   </beans:bean>
   
@@ -132,7 +133,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     <beans:property name="serviceProperties" ref="serviceProperties" />
     <beans:property name="ticketValidator">
       <beans:bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
-        <beans:constructor-arg index="0" value="https://sso.odn.in.eea.sk:18443/cas" />
+        <beans:constructor-arg index="0" value="https://CASSERVER/cas" />
       </beans:bean>
     </beans:property>
     <beans:property name="key" value="CAS_ID"/>
@@ -146,7 +147,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
   <!-- This filter redirects to the CAS Server to signal Single Logout should be performed -->
  <beans:bean id="requestSingleLogoutFilter"
         class="org.springframework.security.web.authentication.logout.LogoutFilter">
-    <beans:constructor-arg value="https://sso.odn.in.eea.sk:18443/cas/logout"/>
+    <beans:constructor-arg value="https://CASSERVER/cas/logout"/>
     <beans:constructor-arg>
       <beans:bean class=
           "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
