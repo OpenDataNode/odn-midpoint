@@ -122,8 +122,11 @@
             </Realm>
 
             <Host name="localhost"  appBase="webapps"
-            unpackWARs="true" autoDeploy="true">
+            unpackWARs="true" autoDeploy="false">
 
+                <Context path="/midpoint" docBase="/usr/share/odn-midpoint/midpoint" privileged="true" allowLinking="true" crossContext="true">
+
+                </Context>
 
                 <!-- SingleSignOn valve, share authentication between web applications
              Documentation at: /docs/config/valve.html -->
