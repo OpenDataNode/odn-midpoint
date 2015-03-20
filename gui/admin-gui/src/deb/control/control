@@ -1,5 +1,5 @@
-Package: odn-midPoint
-Source:  odn-midPoint
+Package: odn-midpoint
+Source:  odn-midpoint
 Version: [[version]]
 Section: java
 Priority: extra
