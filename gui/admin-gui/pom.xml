@@ -644,6 +644,26 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target>
+                                        <!-- move  WEB-INF/web.xml to WEB-INF/web_default.xml  WEB-INF/web.xml. Simbolic link will be created web.xml -> web_default.xml -->
+                                        <move file="${project.build.directory}/midpoint/WEB-INF/web.xml" tofile="${project.build.directory}/midpoint/WEB-INF/web_default.xml"/>
+                                        <move file="${project.build.directory}/midpoint/WEB-INF/ctx-web-security.xml" tofile="${project.build.directory}/midpoint/WEB-INF/ctx-web-security_default.xml"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <artifactId>jdeb</artifactId>
                         <groupId>org.vafer</groupId>
                         <version>1.3</version>
@@ -657,7 +677,7 @@
                                     <!-- set name of package -->
                                     <deb>${project.build.directory}/odn-midpoint_all.deb</deb>
                                     <dataSet>
-                                      <!-- copy  etc/ -->
+                                        <!-- copy  etc/ -->
                                         <data>
                                             <src>${basedir}/src/deb/etc/</src>
                                             <type>directory</type>
@@ -697,7 +717,68 @@
                                                 <path>/var/tmp/odn-midpoint</path>
                                             </paths>
                                         </data>
-                                        <!-- create link to conf for odn-midpoint -->
+                                        <!-- create link /etc/odn-midpoint/midpoint/config.xml -> var/lib/midpoint.home/config.xml -->
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/etc/odn-midpoint/midpoint/config.xml</linkName>
+                                            <linkTarget>/var/lib/midpoint.home/config.xml</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>            
+                                        <!-- create link  /etc/odn-midpoint/midpoint/ctx-web-security.xml ->  /usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml -->
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/etc/odn-midpoint/midpoint/ctx-web-security.xml</linkName>
+                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>       
+                                         <!-- create link /etc/odn-midpoint/midpoint/web.xml -> usr/share/odn-midpoint/midpoint/WEB-INF/web.xml -->
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/etc/odn-midpoint/midpoint/web.xml</linkName>
+                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/web.xml</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>     
+                                        <!-- create link ctx-web-security.xml -> ctx-web-security_default.xml -->
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml</linkName>
+                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security_default.xml</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>    
+                                        <!-- create link web.xml to web_default.xml -->
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/usr/share/odn-midpoint/midpoint/WEB-INF/web.xml</linkName>
+                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/web_default.xml</linkTarget>
+                                            <symlink>true</symlink>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>odn-midpoint</user>
+                                                <group>odn-midpoint</group>
+                                            </mapper>
+                                        </data>                                                    
+                                        
+                                        <!-- create link usr/share/odn-midpoint/conf -> /etc/odn-midpoint/tomcat  -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/conf</linkName>
@@ -709,7 +790,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
-                                        <!-- create link to logs for odn-midpoint -->
+                                        <!-- create link /usr/share/odn-midpoint/logs -> for /var/log/odn-midpoint/ -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/logs</linkName>
@@ -721,7 +802,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
-                                        <!-- create link to work for odn-midpoint -->
+                                        <!-- create link /usr/share/odn-midpoint/work ->  /var/cache/odn-midpoint/ -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/work</linkName>
@@ -733,7 +814,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
-                                        <!-- create link to tmp for odn-midpoint -->
+                                        <!-- create link /usr/share/odn-midpoint/temp ->  var/tmp/odn-midpoint -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/temp</linkName>
@@ -751,7 +832,7 @@
                                             <type>directory</type>
                                             <mapper>
                                                 <type>perm</type>
-                                                <prefix>/usr/share/odn-midpoint/webapps/midpoint</prefix>
+                                                <prefix>/usr/share/odn-midpoint/midpoint</prefix>
                                                 <user>odn-midpoint</user>
                                                 <group>odn-midpoint</group>
                                             </mapper>
