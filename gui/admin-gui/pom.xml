@@ -654,7 +654,10 @@
                                     <goal>jdeb</goal>
                                 </goals>
                                 <configuration>
+                                    <!-- set name of package -->
+                                    <deb>${project.build.directory}/odn-midpoint_all.deb</deb>
                                     <dataSet>
+                                      <!-- copy  etc/ -->
                                         <data>
                                             <src>${basedir}/src/deb/etc/</src>
                                             <type>directory</type>
@@ -663,6 +666,7 @@
                                                 <prefix>/etc</prefix>
                                             </mapper>
                                         </data>
+                                        <!-- copy  midpoint.home -->
                                         <data>
                                             <src>${basedir}/src/deb/var/lib/midpoint.home</src>
                                             <type>directory</type>
@@ -673,6 +677,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
+                                        <!-- copy  odn-midpoint -->
                                         <data>
                                             <src>${basedir}/src/deb/usr/share/odn-midpoint</src>
                                             <type>directory</type>
@@ -683,22 +688,20 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
+                                        <!-- create folders cache, log and tmp for odn-midpoint -->
                                         <data>
                                             <type>template</type>
                                             <paths>
-                                                <path>/var/cache/odn-midpoint/</path>
-                                                <path>/var/log/odn-midpoint/</path>
+                                                <path>/var/cache/odn-midpoint</path>
+                                                <path>/var/log/odn-midpoint</path>
+                                                <path>/var/tmp/odn-midpoint</path>
                                             </paths>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
-                                            </mapper>
                                         </data>
+                                        <!-- create link to conf for odn-midpoint -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/conf</linkName>
-                                            <linkTarget>/etc/odn-midpoint</linkTarget>
+                                            <linkTarget>/etc/odn-midpoint/tomcat</linkTarget>
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
@@ -706,6 +709,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
+                                        <!-- create link to logs for odn-midpoint -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/logs</linkName>
@@ -717,6 +721,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
+                                        <!-- create link to work for odn-midpoint -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/work</linkName>
@@ -728,6 +733,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
+                                        <!-- create link to tmp for odn-midpoint -->
                                         <data>
                                             <type>link</type>
                                             <linkName>/usr/share/odn-midpoint/temp</linkName>
@@ -739,6 +745,7 @@
                                                 <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
+                                        <!-- copy  midpoint war -->
                                         <data>
                                             <src>${project.build.directory}/midpoint</src>
                                             <type>directory</type>

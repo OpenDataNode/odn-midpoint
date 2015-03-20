@@ -20,15 +20,19 @@ set -e
 . /usr/share/debconf/confmodule
 
 db_creadentials() {
+    echo " >>> db_creadentials"
     db_get odn-midpoint/pgsql_db_user
     DB_USER=$RET
 
     db_get odn-midpoint/pgsql_db_password
     DB_PASS=$RET
+    echo " <<< db_creadentials"
 }
 
 
 db_up() {
+   echo " >>> db_up"
+
   #Check if postgresql is started
   /etc/init.d/postgresql status > /dev/null || /etc/init.d/postgresql start >/dev/null 2>&1
 
@@ -47,13 +51,16 @@ db_up() {
     fi
   done
   echo " Done"
+  echo " <<< db_up"
 }
 
 
 db_configure() {
+    echo " >>> db_configure dbname: $1,  usrname: $2 , pass: ******"
     dbname="$1"
     usrname="$2"
     pass="$3"
+    
     CHK_PG_DB=$(su - postgres -c "psql -t -c \"select count(1) from pg_catalog.pg_database where datname = '${dbname}'\"")
     CHK_PG_USER=$(su - postgres -c "psql -t -c \"select count(1) from pg_user where usename = '${usrname}'\"")
 
@@ -81,20 +88,32 @@ db_configure() {
     -e "s/<jdbcUsername>.*/<jdbcUsername>$DB_USER<\/jdbcUsername>/" \
     -e "s/<jdbcPassword>.*/<jdbcPassword>$DB_PASS<\/jdbcPassword>/" \
     /var/lib/midpoint.home/config.xml
+    echo " <<< db_configure"
 }
 
 
 create_user() {
+   echo " >>> create_user"
+
   if ! id odn-midpoint > /dev/null 2>&1 ; then
     adduser --system --no-create-home --disabled-password --home /usr/share/odn-midpoint odn-midpoint --shell /bin/false
   fi
+  echo " <<< create_user"
 }
 
 fix_perms() {
+    echo " >>> fix_perms"
+
     chmod +x  /etc/init.d/odn-midpoint
+    chown  odn-midpoint /var/cache/odn-midpoint
+    chown  odn-midpoint /var/tmp/odn-midpoint
+    chown  odn-midpoint /var/log/odn-midpoint
+    echo " <<< fix_perms"
 }
 
 service_start() {
+    echo " >>> service_start"
+
     update-rc.d odn-midpoint defaults
 
     if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
@@ -102,6 +121,8 @@ service_start() {
     else
         service odn-midpoint restart || true
     fi
+    
+    echo " <<< service_start"
 }
 
 case "$1" in
