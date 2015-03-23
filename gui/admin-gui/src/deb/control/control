@@ -1,6 +1,6 @@
 Package: odn-midpoint
 Source:  odn-midpoint
-Version: [[version]]
+Version: [[debian_package.version]]
 Section: java
 Priority: extra
 Architecture: all

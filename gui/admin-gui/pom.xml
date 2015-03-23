@@ -33,6 +33,7 @@
     </scm>
     <properties>
         <wro4j.version>1.7.1</wro4j.version>
+        <debian_package.version>3.2</debian_package.version>
     </properties>
     <build>
         <finalName>midpoint</finalName>
