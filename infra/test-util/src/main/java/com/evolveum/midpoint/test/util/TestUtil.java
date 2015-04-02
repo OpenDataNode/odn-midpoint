@@ -27,6 +27,7 @@ import com.evolveum.midpoint.schema.processor.ResourceAttributeDefinition;
 import com.evolveum.midpoint.schema.result.OperationResult;
 import com.evolveum.midpoint.schema.result.OperationResultStatus;
 import com.evolveum.midpoint.util.JAXBUtil;
+import com.evolveum.midpoint.util.MiscUtil;
 import com.evolveum.midpoint.util.exception.ObjectAlreadyExistsException;
 import com.evolveum.midpoint.util.exception.SchemaException;
 import com.evolveum.midpoint.util.logging.Trace;
@@ -102,6 +103,11 @@ public class TestUtil {
         } else {
             assertEquals(expectedSet, actualSet);
         }
+    }
+    
+    public static <T> void assertSetEquals(String message, T[] actual, T[] expected) {
+        assertTrue(message+"expected "+Arrays.toString(expected)+", was "+Arrays.toString(actual), 
+        		MiscUtil.unorderedArrayEquals(actual, expected));
     }
     
     public static String getNodeOid(Node node) {
@@ -472,12 +478,17 @@ public class TestUtil {
 			selectSubresultsInternal(retval, subresult, operationNames);
 		}
 	}
-
+	
 	public static String execSystemCommand(String command) throws IOException, InterruptedException {
+		return execSystemCommand(command, false);
+	}
+
+	public static String execSystemCommand(String command, boolean ignoreExitCode) throws IOException, InterruptedException {
 		Runtime runtime = Runtime.getRuntime();
 		LOGGER.debug("Executing system command: {}", command);
 		Process process = runtime.exec(command);
-		process.waitFor();
+		int exitCode = process.waitFor();
+		LOGGER.debug("Command exit code: {}", exitCode);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		StringBuilder output = new StringBuilder();
 		String line = null;
@@ -487,6 +498,11 @@ public class TestUtil {
 		reader.close();
 		String outstring = output.toString();
 		LOGGER.debug("Command output:\n{}",outstring);
+		if (!ignoreExitCode && exitCode != 0) {
+			String msg = "Execution of command '"+command+"' failed with exit code "+exitCode;
+			LOGGER.error("{}", msg);
+			throw new IOException(msg);
+		}
 		return outstring;
 	}
 

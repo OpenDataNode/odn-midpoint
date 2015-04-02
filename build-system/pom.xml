@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (c) 2010-2013 Evolveum
+  ~ Copyright (c) 2010-2015 Evolveum
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@
         <jaxb.version>2.2.10-b140310.1920</jaxb.version>
         <jaxb-xjc.version>2.2.10-b140310.1920</jaxb-xjc.version>
         <junit.version>4.8.2</junit.version>
-        <opendj.version>2.4.3</opendj.version>
+        <opendj.version>2.6.2</opendj.version>
         <mockito.version>1.10.8</mockito.version>
         <quartz.version>2.1.3</quartz.version>
         <selenium.version>1.0.1</selenium.version>
@@ -74,6 +74,7 @@
         <xmlsec.version>2.0.1</xmlsec.version>
         <connid.version>1.4.0.49</connid.version>
         <jasper.version>6.0.0</jasper.version>
+        <derby.version>10.11.1.1</derby.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -155,6 +156,11 @@
 				<artifactId>groovy-jsr223</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.python</groupId>
+				<artifactId>jython</artifactId>
+				<version>2.5.3</version>
+			</dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -183,7 +189,7 @@
             <dependency>
                 <groupId>com.sleepycat</groupId>
                 <artifactId>je</artifactId>
-                <version>4.1.10</version>
+                <version>5.0.103</version>
             </dependency>
             <dependency>
                     <artifactId>jaxb-api</artifactId>
@@ -354,6 +360,11 @@
 	  			<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 				<version>${cxf.version}</version>
+			</dependency>
+			<dependency>
+			   <groupId>org.apache.cxf</groupId>
+			   <artifactId>cxf-rt-rs-client</artifactId>
+			   <version>${cxf.version}</version>
 			</dependency>
 			<dependency>
 			   <groupId>org.apache.cxf</groupId>
@@ -563,6 +574,21 @@
                 <artifactId>velocity</artifactId>
                 <version>1.7</version>
             </dependency>
+            <dependency>
+				<groupId>org.apache.derby</groupId>
+				<artifactId>derby</artifactId>
+				<version>${derby.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.derby</groupId>
+				<artifactId>derbynet</artifactId>
+				<version>${derby.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.derby</groupId>
+				<artifactId>derbyclient</artifactId>
+				<version>${derby.version}</version>
+			</dependency>
             <!-- Jasper reports -->
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
