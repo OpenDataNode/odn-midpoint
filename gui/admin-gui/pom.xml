@@ -730,8 +730,6 @@
                                             <mapper>
                                                 <type>perm</type>
                                                 <prefix>/var/lib/midpoint.home</prefix>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <!-- copy  odn-midpoint -->
@@ -741,8 +739,6 @@
                                             <mapper>
                                                 <type>perm</type>
                                                 <prefix>/usr/share/odn-midpoint</prefix>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <!-- create folders cache, log and tmp for odn-midpoint -->
@@ -762,8 +758,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>            
                                         <!-- create link  /etc/odn-midpoint/midpoint/ctx-web-security.xml ->  /usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml -->
@@ -774,8 +768,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>       
                                          <!-- create link /etc/odn-midpoint/midpoint/web.xml -> usr/share/odn-midpoint/midpoint/WEB-INF/web.xml -->
@@ -786,8 +778,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>     
                                         <!-- create link ctx-web-security.xml -> ctx-web-security_default.xml -->
@@ -798,8 +788,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>    
                                         <!-- create link web.xml to web_default.xml -->
@@ -810,8 +798,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>                                                    
                                         
@@ -823,8 +809,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <!-- create link /usr/share/odn-midpoint/logs -> for /var/log/odn-midpoint/ -->
@@ -835,8 +819,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <!-- create link /usr/share/odn-midpoint/work ->  /var/cache/odn-midpoint/ -->
@@ -847,8 +829,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <!-- create link /usr/share/odn-midpoint/temp ->  var/tmp/odn-midpoint -->
@@ -859,8 +839,6 @@
                                             <symlink>true</symlink>
                                             <mapper>
                                                 <type>perm</type>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                         <!-- copy  midpoint war -->
@@ -870,8 +848,6 @@
                                             <mapper>
                                                 <type>perm</type>
                                                 <prefix>/usr/share/odn-midpoint/midpoint</prefix>
-                                                <user>odn-midpoint</user>
-                                                <group>odn-midpoint</group>
                                             </mapper>
                                         </data>
                                     </dataSet>
