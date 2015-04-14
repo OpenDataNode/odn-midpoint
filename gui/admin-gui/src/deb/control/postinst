@@ -108,6 +108,7 @@ fix_perms() {
     chown  odn-midpoint /var/cache/odn-midpoint
     chown  odn-midpoint /var/tmp/odn-midpoint
     chown  odn-midpoint /var/log/odn-midpoint
+    chown  odn-midpoint /var/lib/midpoint.home
     echo " <<< fix_perms"
 }
 
