@@ -6,5 +6,5 @@ Priority: extra
 Architecture: all
 Maintainer: jan.marcek@eea.sk
 Homepage:  https://github.com/Evolveum/midpoint
-Depends:  openjdk-7-jre-headless, tomcat7, postgresql
+Depends:  openjdk-7-jre-headless, tomcat7, postgresql, odn-cas
 Description: Utility module to compile all of the maven based midPoint projects.
