@@ -1,0 +1,29 @@
+<user xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:ext="http://midpoint.evolveum.com/xml/ns/custom/opendata/ext"
+      oid="11111111-0000-0000-0000-000000000001">
+   <name>casadmin</name>
+   <assignment id="2">
+      <targetRef oid="00000000-0000-0000-0000-000000000004" type="RoleType"/>
+   </assignment>
+   <assignment id="1">
+      <targetRef xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+                 oid="11111111-0000-0000-0000-000000000003"
+                 type="c:RoleType"/>
+   </assignment>
+   <activation>
+      <administrativeStatus>enabled</administrativeStatus>
+   </activation>
+   <fullName>CAS Administrator</fullName>
+   <givenName>admin</givenName>
+   <familyName>admin</familyName>
+    <extension >
+      <ext:role>admin</ext:role>
+   </extension>
+   
+   <credentials>
+      <password>
+         <value xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3">
+            <t:clearValue>Passw0rd</t:clearValue>
+         </value>
+      </password>
+   </credentials>
+</user>

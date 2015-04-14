@@ -1,0 +1,20 @@
+<role xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+      oid="11111111-0000-0000-0000-000000000004">
+   <name>ODN User</name>
+   <inducement>
+      <construction>
+         <resourceRef xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+                      oid="11111111-0000-0000-0000-000000000002"
+                      type="c:ResourceType"/>
+         <attribute>
+            <ref xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">ri:initials</ref>
+            <displayName>SPR ROLES</displayName>
+            <outbound>
+               <expression>
+                  <value>MOD-R-PO</value>
+               </expression>
+            </outbound>
+         </attribute>
+      </construction>
+   </inducement>
+</role>

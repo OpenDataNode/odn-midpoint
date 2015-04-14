@@ -1,0 +1,242 @@
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+		  xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+		  xmlns:ext="http://midpoint.evolveum.com/xml/ns/custom/opendata/ext"
+		  xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3"
+		  xmlns:mr="http://prism.evolveum.com/xml/ns/public/matching-rule-3"
+		  xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"
+		  xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3"
+		  xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3"
+		  xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3"
+          oid="11111111-0000-0000-0000-000000000002">
+   <name>OpenLDAP</name>
+   <description>Internal LDAP for odn users</description>
+   <connectorRef type="ConnectorType"><!-- ICF org.identityconnectors.ldap.LdapConnector v1.4.0.49 -->
+      <filter >
+         <q:equal>
+            <q:path>c:connectorType</q:path>
+            <q:value>org.identityconnectors.ldap.LdapConnector</q:value>
+         </q:equal>
+      </filter>
+   </connectorRef>
+   <connectorConfiguration >
+      <icfc:connectorPoolConfiguration>
+         <icfc:minEvictableIdleTimeMillis>120000</icfc:minEvictableIdleTimeMillis>
+         <icfc:minIdle>1</icfc:minIdle>
+         <icfc:maxIdle>10</icfc:maxIdle>
+         <icfc:maxObjects>10</icfc:maxObjects>
+         <icfc:maxWait>150000</icfc:maxWait>
+      </icfc:connectorPoolConfiguration>
+      <icfc:producerBufferSize>100</icfc:producerBufferSize>
+      <icfc:timeouts>
+         <icfc:create>-1</icfc:create>
+         <icfc:get>-1</icfc:get>
+         <icfc:update>-1</icfc:update>
+         <icfc:delete>-1</icfc:delete>
+         <icfc:test>-1</icfc:test>
+         <icfc:scriptOnConnector>-1</icfc:scriptOnConnector>
+         <icfc:scriptOnResource>-1</icfc:scriptOnResource>
+         <icfc:authentication>-1</icfc:authentication>
+         <icfc:search>-1</icfc:search>
+         <icfc:validate>-1</icfc:validate>
+         <icfc:sync>-1</icfc:sync>
+         <icfc:schema>-1</icfc:schema>
+      </icfc:timeouts>
+      <icfc:resultsHandlerConfiguration>
+         <icfc:enableFilteredResultsHandler>false</icfc:enableFilteredResultsHandler>
+      </icfc:resultsHandlerConfiguration>
+      <icfc:configurationProperties xmlns:gen736="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-ldap/org.identityconnectors.ldap.LdapConnector">
+         <gen736:modifiersNamesToFilterOut>cn=idm,ou=Administrators,dc=opendata,dc=org</gen736:modifiersNamesToFilterOut>
+         <gen736:credentials >
+            <t:clearValue>secret</t:clearValue>
+         </gen736:credentials>
+         <gen736:port>389</gen736:port>
+         <gen736:vlvSortAttribute>uid</gen736:vlvSortAttribute>
+         <gen736:vlvSortOrderingRule>2.5.13.3</gen736:vlvSortOrderingRule>
+         <gen736:useBlocks>true</gen736:useBlocks>
+         <gen736:principal>cn=idm,ou=Administrators,dc=opendata,dc=org</gen736:principal>
+         <gen736:baseContexts>dc=opendata,dc=org</gen736:baseContexts>
+         <gen736:host>localhost</gen736:host>
+         <gen736:groupMemberAttribute>member</gen736:groupMemberAttribute>
+         <gen736:passwordHashAlgorithm>SSHA</gen736:passwordHashAlgorithm>
+         <gen736:usePagedResultControl>true</gen736:usePagedResultControl>
+         <gen736:uidAttribute>dn</gen736:uidAttribute>
+      </icfc:configurationProperties>
+   </connectorConfiguration>
+   <schema>
+      <generationConstraints>
+         <generateObjectClass>ri:AccountObjectClass</generateObjectClass>
+         <generateObjectClass>ri:GroupObjectClass</generateObjectClass>
+         <generateObjectClass>ri:CustomorganizationalUnitObjectClass</generateObjectClass>
+         <generateObjectClass>ri:CustomorganizationObjectClass</generateObjectClass>
+      </generationConstraints>
+    
+   </schema>
+   <schemaHandling>
+      <objectType>
+         <intent>default</intent>
+         <displayName>Default Account</displayName>
+         <default>true</default>
+         <objectClass >ri:AccountObjectClass</objectClass>
+         <attribute>
+            <ref >icfs:name</ref>
+            <displayName>Username</displayName>
+            <outbound>
+               <source>
+                  <c:path>$user/name</c:path>
+               </source>
+               <expression>
+                  <script>
+                     <code>
+						'uid=' + name+ ',ou=people,dc=opendata,dc=org'
+					 </code>
+                  </script>
+               </expression>
+            </outbound>
+         </attribute>
+         <attribute>
+            <ref>icfs:uid</ref>
+            <displayName>Entry UUID</displayName>
+            <limitations>
+               <access>
+                  <read>true</read>
+                  <add>false</add>
+                  <modify>true</modify>
+               </access>
+            </limitations>
+            <matchingRule>mr:stringIgnoreCase</matchingRule>
+         </attribute>
+         <attribute>
+            <ref xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">ri:cn</ref>
+            <displayName>Common Name</displayName>
+            <limitations>
+               <minOccurs>0</minOccurs>
+               <access>
+                  <read>true</read>
+                  <add>true</add>
+                  <modify>true</modify>
+               </access>
+            </limitations>
+            <outbound>
+               <source>
+                  <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">$user/fullName</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         <attribute>
+            <ref xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">ri:sn</ref>
+            <displayName>Surname</displayName>
+            <limitations>
+               <minOccurs>0</minOccurs>
+            </limitations>
+            <outbound>
+               <source>
+                  <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">familyName</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         <attribute>
+            <ref>ri:givenName</ref>
+            <displayName>Given Name</displayName>
+            <outbound>
+               <source>
+                  <c:path>$c:user/c:givenName</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         <attribute>
+            <ref>ri:uid</ref>
+            <displayName>Login Name</displayName>
+            <matchingRule>mr:stringIgnoreCase</matchingRule>
+            <outbound>
+               <strength>weak</strength>
+               <source>
+                  <c:path>$user/name</c:path>
+               </source>               
+            </outbound>
+            <inbound>
+               <target>
+                  <c:path>$user/name</c:path>
+               </target>
+            </inbound>
+         </attribute>
+         <attribute>
+            <ref>ri:description</ref>
+            <outbound>
+               <source>
+                  <c:path>description</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         
+         <attribute>
+            <ref>ri:employeeType</ref>
+            <displayName>User role</displayName>
+            <outbound>
+               <source>
+                  <c:path>$user/extension/ext:role</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         <attribute>
+            <ref>ri:o</ref>
+            <displayName>Organization</displayName>
+            <outbound>
+               <source>
+                  <c:path>$user/organization</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         <attribute>
+            <ref>ri:ou</ref>
+            <displayName>Organizational Unit</displayName>
+            <outbound>
+               <source>
+                  <c:path>$user/organizationalUnit</c:path>
+               </source>
+            </outbound>
+         </attribute>
+         <activation>
+            <administrativeStatus>
+               <outbound/>
+            </administrativeStatus>
+         </activation>
+         <credentials>
+            <password>
+               <outbound/>
+            </password>
+         </credentials>
+      </objectType>
+   </schemaHandling>
+   
+   <synchronization>
+      <objectSynchronization>
+         <enabled>true</enabled>
+         <correlation>
+            <q:equal>
+               <q:path>c:name</q:path>
+               <expression>
+                  <c:path>declare namespace ri='http://midpoint.evolveum.com/xml/ns/public/resource/instance-3'; $shadow/attributes/ri:uid</c:path>
+               </expression>
+            </q:equal>
+         </correlation>
+         <reaction>
+            <situation>linked</situation>
+            <synchronize>true</synchronize>
+         </reaction>
+         <reaction>
+            <situation>unlinked</situation>
+            <synchronize>true</synchronize>
+            <action>
+               <handlerUri>http://midpoint.evolveum.com/xml/ns/public/model/action-3#link</handlerUri>
+            </action>
+         </reaction>
+         <reaction>
+            <situation>unmatched</situation>
+            <synchronize>true</synchronize>
+            <action>
+               <handlerUri>http://midpoint.evolveum.com/xml/ns/public/model/action-3#addFocus</handlerUri>
+            </action>
+         </reaction>
+      </objectSynchronization>
+   </synchronization>
+</resource>

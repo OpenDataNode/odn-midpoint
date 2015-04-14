@@ -1,0 +1,102 @@
+<objectTemplate xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+				xmlns:ext="http://midpoint.evolveum.com/xml/ns/custom/opendata/ext"
+                oid="10000000-0000-0000-0000-000000000222"
+                version="2">
+   <name>User Template</name>
+   <mapping>
+      <name>Administrator role assignment</name>
+      <description>Assign 'administrator' role to the user.</description>
+      <source>
+         <name>role</name>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">$user/extension/ext:role</c:path>
+      </source>
+      <expression>
+         <assignmentTargetSearch>
+            <targetType xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">c:RoleType</targetType>
+            <oid>11111111-0000-0000-0000-000000000003</oid>
+         </assignmentTargetSearch>
+      </expression>
+      <target>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">assignment</c:path>
+      </target>
+      <condition>
+         <script>
+            <code>
+				"admin".equals(role);
+            </code>
+         </script>
+      </condition>
+   </mapping>
+   <mapping>
+      <name>Administrator role assignment</name>
+      <description>Assign midPoint's administrator role</description>
+      <source>
+         <name>role</name>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">$user/extension/ext:role</c:path>
+      </source>
+      <expression>
+         <assignmentTargetSearch>
+            <targetType xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">c:RoleType</targetType>
+            <oid>00000000-0000-0000-0000-000000000004</oid>
+         </assignmentTargetSearch>
+      </expression>
+      <target>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">assignment</c:path>
+      </target>
+      <condition>
+         <script>
+            <code>
+				"admin".equals(role);
+            </code>
+         </script>
+      </condition>
+   </mapping>
+   <mapping>
+      <name>User role assignment</name>
+      <description>Assign 'user' role to the user.</description>
+      <source>
+         <name>role</name>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">$user/extension/ext:role</c:path>
+      </source>
+      <expression>
+         <assignmentTargetSearch>
+            <targetType xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">c:RoleType</targetType>
+            <oid>11111111-0000-0000-0000-000000000004</oid>
+         </assignmentTargetSearch>
+      </expression>
+      <target>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">assignment</c:path>
+      </target>
+      <condition>
+         <script>
+            <code>
+				"user".equals(role)
+            </code>
+         </script>
+      </condition>
+   </mapping>
+   <mapping>
+      <name>End User role assignment</name>
+      <description>Assign midPoint's user role to the user.</description>
+      <source>
+         <name>role</name>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">$user/extension/ext:role</c:path>
+      </source>
+      <expression>
+         <assignmentTargetSearch>
+            <targetType xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">c:RoleType</targetType>
+            <oid>00000000-0000-0000-0000-000000000008</oid>
+         </assignmentTargetSearch>
+      </expression>
+      <target>
+         <c:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">assignment</c:path>
+      </target>
+      <condition>
+         <script>
+            <code>
+				"user".equals(role)
+            </code>
+         </script>
+      </condition>
+   </mapping>
+</objectTemplate>
