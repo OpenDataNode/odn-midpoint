@@ -11,7 +11,7 @@
             <displayName>SPR ROLES</displayName>
             <outbound>
                <expression>
-                  <value>MOD-R-PO</value>
+                  <value>User</value>
                </expression>
             </outbound>
          </attribute>

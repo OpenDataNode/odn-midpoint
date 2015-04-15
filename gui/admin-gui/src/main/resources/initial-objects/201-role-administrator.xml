@@ -11,7 +11,7 @@
             <displayName>SPR ROLES</displayName>
             <outbound>
                <expression>
-                  <value>MOD-R-TRANSA</value>
+                  <value>Administrator</value>
                </expression>
             </outbound>
          </attribute>
