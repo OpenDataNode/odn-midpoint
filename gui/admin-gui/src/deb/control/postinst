@@ -105,10 +105,10 @@ fix_perms() {
     echo " >>> fix_perms"
 
     chmod +x  /etc/init.d/odn-midpoint
-    chown  odn-midpoint /var/cache/odn-midpoint
-    chown  odn-midpoint /var/tmp/odn-midpoint
-    chown  odn-midpoint /var/log/odn-midpoint
-    chown  odn-midpoint /var/lib/midpoint.home
+    chown -R odn-midpoint /var/cache/odn-midpoint
+    chown -R odn-midpoint /var/tmp/odn-midpoint
+    chown -R odn-midpoint /var/log/odn-midpoint
+    chown -R odn-midpoint /var/lib/midpoint.home
     chown -R odn-midpoint /usr/share/odn-midpoint
     echo " <<< fix_perms"
 }
