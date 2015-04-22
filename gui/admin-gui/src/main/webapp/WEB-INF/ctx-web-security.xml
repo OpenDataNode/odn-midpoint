@@ -114,7 +114,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
   <beans:bean id="casEntryPoint"
       class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
-    <beans:property name="loginUrl" value="https://$HOSTNAME:38443/cas/login"/>
+    <beans:property name="loginUrl" value="https://$HOSTNAME/cas/login"/>
     <beans:property name="serviceProperties" ref="serviceProperties"/>
   </beans:bean>
   
@@ -132,7 +132,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     <beans:property name="serviceProperties" ref="serviceProperties" />
     <beans:property name="ticketValidator">
       <beans:bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
-        <beans:constructor-arg index="0" value="https://$HOSTNAME:38443/cas" />
+        <beans:constructor-arg index="0" value="https://$HOSTNAME/cas" />
       </beans:bean>
     </beans:property>
     <beans:property name="key" value="CAS_ID"/>
@@ -146,7 +146,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
   <!-- This filter redirects to the CAS Server to signal Single Logout should be performed -->
  <beans:bean id="requestSingleLogoutFilter"
         class="org.springframework.security.web.authentication.logout.LogoutFilter">
-    <beans:constructor-arg value="https://$HOSTNAME:38443/cas/logout"/>
+    <beans:constructor-arg value="https://$HOSTNAME/cas/logout"/>
     <beans:constructor-arg>
       <beans:bean class=
           "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
