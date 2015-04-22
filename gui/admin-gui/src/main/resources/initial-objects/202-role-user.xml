@@ -8,7 +8,7 @@
                       type="c:ResourceType"/>
          <attribute>
             <ref xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">ri:initials</ref>
-            <displayName>SPR ROLES</displayName>
+            <displayName>User</displayName>
             <outbound>
                <expression>
                   <value>User</value>
