@@ -110,23 +110,9 @@ fix_perms() {
     chown -R odn-midpoint /var/log/odn-midpoint
     chown -R odn-midpoint /var/lib/midpoint.home
     chown -R odn-midpoint /usr/share/odn-midpoint
+
     echo " <<< fix_perms"
 }
-
-
-set_midpoint() {
-  echo ">> set_midpoint hostname: $1"
-  HOSTNAME=$1
-    
-  # set domain name  
-  sed --in-place \
-        -e "s/\$HOSTNAME/$HOSTNAME/" \
-        /usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml
-  
-    
-  echo "<< set_midpoint"
-}
-
 
 service_start() {
     echo " >>> service_start"
@@ -142,32 +128,13 @@ service_start() {
     echo " <<< service_start"
 }
 
-get_hostname() {
-    HOSTNAME=`hostname --all-fqdns`
-    if [ -z ${HOSTNAME}  ]
-    then
-        HOSTNAME=`hostname`
-    fi
-
-    if [ -z ${HOSTNAME}  ] 
-    then
-        HOSTNAME="localhost"
-    fi
-
-    HOSTNAME="$(echo "${HOSTNAME}" | tr -d '[[:space:]]')"    
-    # return hostname
-    echo "$HOSTNAME"
-}
-
 case "$1" in
     configure)
-        hostname=$(get_hostname)
         create_user
         fix_perms
         db_up
         db_creadentials
         db_configure midpoint $DB_USER $DB_PASS
-        set_midpoint $hostname
         service_start
         db_stop
     ;;
