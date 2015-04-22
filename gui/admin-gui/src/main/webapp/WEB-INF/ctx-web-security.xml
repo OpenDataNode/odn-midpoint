@@ -52,7 +52,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
         <intercept-url pattern="/admin/**" access="isFullyAuthenticated()"/>  <!--  access="isAuthenticated()"/> -->
 
-        <logout logout-url="/j_spring_security_logout" invalidate-session="true" success-handler-ref="logoutHandler" />
+<!--        <logout logout-url="/j_spring_security_logout" invalidate-session="true" success-handler-ref="logoutHandler" /> -->
         <session-management>
             <concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
         </session-management>
@@ -61,13 +61,11 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
         <!-- <custom-filter position="PRE_AUTH_FILTER" ref="requestHeaderAuthenticationFilter" />  -->
 		
 		<!-- For SSO CAS integration uncomment  following -->
-		<!--
 		<custom-filter position="CAS_FILTER" ref="casFilter" />
 		<logout logout-success-url="/cas-logout.jsp"/>
 		<custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
+
 		<custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>
-		-->
-		
 		
         <form-login login-page="/login" default-target-url="/home" />
         <intercept-url pattern="/**" access="isFullyAuthenticated()"/> 
@@ -101,9 +99,8 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
         <authentication-provider ref="midPointAuthenticationProvider"/>
     </authentication-manager>
 	
-	<!-- For SSO CAS integration uncomment following and set CASSERVER address   and   change service url according to your needs-->
+	<!-- For SSO CAS integration uncomment following and set CASSERVER address-->
 	<!-- CAS CONFIG -->
-	<!--
 	<beans:bean id="serviceProperties"
         class="org.springframework.security.cas.ServiceProperties">
     <beans:property name="service"
@@ -141,16 +138,14 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     </beans:property>
     <beans:property name="key" value="CAS_ID"/>
   </beans:bean>
- 
--->
-
+  
 	<!-- For SLO CAS integration uncomment following and set CASSERVER address-->
 	<!-- LOGOUT -->
 	
   <!-- This filter handles a Single Logout Request from the CAS Server -->
-  <!--<beans:bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/> -->
+<beans:bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/> 
   <!-- This filter redirects to the CAS Server to signal Single Logout should be performed -->
-  <!--<beans:bean id="requestSingleLogoutFilter"
+ <beans:bean id="requestSingleLogoutFilter"
         class="org.springframework.security.web.authentication.logout.LogoutFilter">
     <beans:constructor-arg value="https://CASSERVER/cas/logout"/>
     <beans:constructor-arg>
@@ -159,7 +154,6 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     </beans:constructor-arg>
     <beans:property name="filterProcessesUrl" value="/j_spring_cas_security_logout"/>
   </beans:bean>
-  -->
   
   
 </beans:beans>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<xsd:schema elementFormDefault="qualified"
+            targetNamespace="http://midpoint.evolveum.com/xml/ns/custom/opendata/ext"
+            xmlns:tns="http://midpoint.evolveum.com/xml/ns/custom/opendata/ext"
+            xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3"
+            xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			
+			 <!-- user extension -->
+
+    <xsd:complexType name="UserTypeExtensionType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <a:extension ref="c:UserType"/>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="role" type="tns:UserRoleType" minOccurs="0">
+                <xsd:annotation>
+                        <xsd:appinfo>
+                                <a:indexed>true</a:indexed>
+                                <a:displayName>Role</a:displayName>
+                                <a:displayOrder>110</a:displayOrder>
+                                <a:help>User's role</a:help>
+                        </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="UserRoleType">
+        <xsd:annotation>
+            <xsd:documentation>Enum for user's role in ODN</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="admin">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <a:label>Administrator</a:label>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="user">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <a:label>User</a:label>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

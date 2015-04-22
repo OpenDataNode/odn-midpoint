@@ -1,0 +1,1 @@
+CATALINA_OPTS="-XX:MaxPermSize=256m -Xms256m -Xmx1280m -Dmidpoint.home=/var/lib/midpoint.home -Dmidpoint.nodeId=Midpoint1"
