@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <name>midPoint Repository - sql repository</name>
     <groupId>com.evolveum.midpoint.repo</groupId>
@@ -24,7 +25,7 @@
     <parent>
         <artifactId>repo</artifactId>
         <groupId>com.evolveum.midpoint</groupId>
-        <version>3.3-SNAPSHOT</version>
+        <version>3.2-SNAPSHOT</version>
     </parent>
     <scm>
         <connection>https://github.com/Evolveum/midpoint.git</connection>
@@ -35,17 +36,17 @@
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>repo-api</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>audit-api</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.infra</groupId>
             <artifactId>common</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.2-SNAPSHOT</version>
         </dependency>
 
         <!-- SPRING -->
@@ -95,7 +96,7 @@
         <dependency>
             <groupId>com.evolveum.midpoint.tools</groupId>
             <artifactId>test-ng</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -25,7 +25,7 @@
     <parent>
         <groupId>com.evolveum.midpoint</groupId>
         <artifactId>midpoint</artifactId>
-        <version>3.3-SNAPSHOT</version>
+        <version>3.2-SNAPSHOT</version>
     </parent>
     <pluginRepositories>
         <pluginRepository>
@@ -734,7 +734,7 @@
                                 <id>git-describe</id>
                                 <phase>initialize</phase>
                                 <configuration>
-                                    <outputPrefix />
+                                    <outputPrefix></outputPrefix>
                                 </configuration>
                             </execution>
                         </executions>
