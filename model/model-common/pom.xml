@@ -24,7 +24,7 @@
 	<parent>
 		<artifactId>model</artifactId>
 		<groupId>com.evolveum.midpoint</groupId>
-		<version>3.2-SNAPSHOT</version>
+		<version>3.1.1</version>
 	</parent>
 	<organization>
 		<name>Evolveum</name>
@@ -50,22 +50,22 @@
 		<dependency>
 			<groupId>com.evolveum.midpoint.model</groupId>
 			<artifactId>model-api</artifactId>
-			<version>3.2-SNAPSHOT</version>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.evolveum.midpoint.infra</groupId>
 			<artifactId>util</artifactId>
-			<version>3.2-SNAPSHOT</version>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.evolveum.midpoint.infra</groupId>
 			<artifactId>schema</artifactId>
-			<version>3.2-SNAPSHOT</version>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.evolveum.midpoint.infra</groupId>
 			<artifactId>common</artifactId>
-			<version>3.2-SNAPSHOT</version>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -77,11 +77,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-jsr223</artifactId>
+			<artifactId>groovy-all</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.python</groupId>
@@ -96,13 +92,13 @@
 		<dependency>
 			<groupId>com.evolveum.midpoint.infra</groupId>
 			<artifactId>test-util</artifactId>
-			<version>3.2-SNAPSHOT</version>
+			<version>3.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.evolveum.midpoint.tools</groupId>
 			<artifactId>test-ng</artifactId>
-			<version>3.2-SNAPSHOT</version>
+			<version>3.1.1</version>
 			<scope>test</scope>
 		</dependency>
     </dependencies>

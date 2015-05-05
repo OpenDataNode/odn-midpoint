@@ -17,6 +17,9 @@
 <c:user oid="ffb9729c-d48b-11e4-9720-001e8c717e5b" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">
 	<c:name>nobody</c:name>
+	<c:activation>
+		<c:administrativeStatus>enabled</c:administrativeStatus>
+	</c:activation>
 	<c:fullName>No Body</c:fullName>
 	<c:givenName>No</c:givenName>
 	<c:familyName>Body</c:familyName>

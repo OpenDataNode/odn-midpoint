@@ -20,11 +20,11 @@
     <groupId>com.evolveum.midpoint.gui</groupId>
     <artifactId>admin-gui</artifactId>
     <packaging>war</packaging>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.1.1</version>
     <parent>
         <artifactId>gui</artifactId>
         <groupId>com.evolveum.midpoint</groupId>
-        <version>3.2-SNAPSHOT</version>
+        <version>3.1.1</version>
     </parent>
     <scm>
         <connection>https://github.com/Evolveum/midpoint.git</connection>
@@ -33,7 +33,6 @@
     </scm>
     <properties>
         <wro4j.version>1.7.1</wro4j.version>
-        <debian_package.version>3.2</debian_package.version>
     </properties>
     <build>
         <finalName>midpoint</finalName>
@@ -47,7 +46,7 @@
             </resource>
             <!--  ICF LOGGING CONFIGURATION -->
             <resource>
-                <targetPath>../midpoint/META-INF/services</targetPath>
+            	<targetPath>../midpoint/META-INF/services</targetPath>
                 <filtering>false</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
@@ -104,15 +103,15 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.webjars</groupId>
-                    <artifactId>webjars-locator</artifactId>
+				    <groupId>org.webjars</groupId>
+    				<artifactId>webjars-locator</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <version>0.15</version>
+        	<groupId>org.webjars</groupId>
+    		<artifactId>webjars-locator</artifactId>
+    		<version>0.15</version>
         </dependency>
         <dependency>
             <groupId>ro.isdc.wro4j</groupId>
@@ -189,22 +188,22 @@
         <dependency>
             <groupId>com.evolveum.midpoint.gui</groupId>
             <artifactId>admin-gui-en-US</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
-        <dependency>
+	    <dependency>
             <groupId>com.evolveum.midpoint.gui</groupId>
             <artifactId>admin-gui-sk-SK</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.gui</groupId>
             <artifactId>admin-gui-tr-TR</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.gui</groupId>
             <artifactId>admin-gui-es-ES</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
 
         <!-- JDBC DRIVERS -->
@@ -217,54 +216,53 @@
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>repo-api</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <exclusions>
-                <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-core</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
+            	<exclusion>
+            		<artifactId>jaxb-impl</artifactId>
+            		<groupId>com.sun.xml.bind</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>jaxb-core</artifactId>
+            		<groupId>com.sun.xml.bind</groupId>
+            	</exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>report-api</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>model-api</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>security-api</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>workflow-api</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>notifications-api</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
         </dependency>
         <!-- MIDPOINT RUNTIME DEPENDENCIES -->
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>repo-sql-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>2.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -275,75 +273,79 @@
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>repo-cache</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
             <exclusions>
-                <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-api</artifactId>
-                    <groupId>javax.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-core</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
+            	<exclusion>
+            		<artifactId>jaxb-impl</artifactId>
+            		<groupId>com.sun.xml.bind</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>jaxb-api</artifactId>
+            		<groupId>javax.xml.bind</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>jaxb-core</artifactId>
+            		<groupId>com.sun.xml.bind</groupId>
+            	</exclusion>
+      <!--      	<exclusion>
+            		<artifactId>javax.servlet</artifactId>
+            		<groupId>org.eclipse.jetty.orbit</groupId>
+            	</exclusion> -->
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>task-quartz-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>audit-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>security-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>model-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
             <exclusions>
-                <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
+            	<exclusion>
+            		<artifactId>jaxb-impl</artifactId>
+            		<groupId>com.sun.xml.bind</groupId>
+            	</exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>workflow-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>notifications-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.provisioning</groupId>
             <artifactId>provisioning-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>system-init</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
 <!--         <dependency> -->
@@ -355,13 +357,13 @@
 	<dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>report-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>report-ds-impl</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
 			<scope>runtime</scope>
 			 <exclusions>
             	<exclusion>
@@ -377,18 +379,17 @@
 <!--     		</exclusions> -->
         </dependency>
 	<dependency>
-
             <groupId>com.evolveum.midpoint.infra</groupId>
             <artifactId>common</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+  					<artifactId>xml-apis</artifactId>
+				</exclusion>
             </exclusions>
         </dependency>
-
+ 
         <!-- SPRING -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -474,23 +475,23 @@
         </dependency>
         -->
 
-        <dependency>
-            <groupId>javax.jws</groupId>
-            <artifactId>jsr181-api</artifactId>
-            <version>1.0-MR1</version>
-        </dependency>
+		<dependency>
+			<groupId>javax.jws</groupId>
+			<artifactId>jsr181-api</artifactId>
+			<version>1.0-MR1</version>
+		</dependency>
 
         <!-- TEST -->
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>repo-test-util</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.evolveum.midpoint.repo</groupId>
             <artifactId>repo-sql-impl-test</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -507,18 +508,18 @@
         <dependency>
             <groupId>com.evolveum.midpoint.tools</groupId>
             <artifactId>test-ng</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
 
         <!-- Dependencies to connectors, just to add to good place in WAR -->
         <dependency>
-            <groupId>com.evolveum.polygon</groupId>
-            <artifactId>connector-ldap</artifactId>
+			<groupId>com.evolveum.polygon</groupId>
+			<artifactId>connector-ldap</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.evolveum.polygon</groupId>
+        	<groupId>com.evolveum.polygon</groupId>
             <artifactId>connector-databasetable</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -527,6 +528,7 @@
             <artifactId>connector-csvfile</artifactId>
             <scope>runtime</scope>
         </dependency>
+     
         <!-- end connectors -->
 
         <!-- logging bridges to slf4j -->
@@ -561,68 +563,68 @@
         </dependency>
         <!-- Jasper reports -->
         <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-        </dependency>
-        <!-- report dependency (needed for microsoft office formats) -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.10.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-javaflow</groupId>
-            <artifactId>commons-javaflow</artifactId>
-            <version>20060411</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+		</dependency>
+		<!-- report dependency (needed for microsoft office formats) -->
+            <dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.10.1</version>
+			</dependency>
+		<dependency>
+	<groupId>commons-javaflow</groupId>
+	<artifactId>commons-javaflow</artifactId>
+	<version>20060411</version>
+</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Uncomment following if you want midpoint to be a part of SSO using CAS server-->
-        <!-- SSO CAS Client dependencies -->
-        <dependency>
-            <groupId>org.jasig.cas.client</groupId>
-            <artifactId>cas-client-integration-tomcat-v7</artifactId>
-            <version>3.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jasig.cas.client</groupId>
-            <artifactId>cas-client-core</artifactId>
-            <version>3.3.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>xercesImpl</artifactId>
-                    <groupId>xerces</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>xmltooling</artifactId>
-                    <groupId>org.opensaml</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>velocity</artifactId>
-                    <groupId>velocity</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
+		
+		<!-- Uncomment following if you want midpoint to be a part of SSO using CAS server-->
+		<!-- SSO CAS Client dependencies -->
+	<!--	<dependency>
+			<groupId>org.jasig.cas.client</groupId>
+			<artifactId>cas-client-integration-tomcat-v7</artifactId>
+			<version>3.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jasig.cas.client</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>3.3.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xercesImpl</artifactId>
+					<groupId>xerces</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>xmltooling</artifactId>
+					<groupId>org.opensaml</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>velocity</artifactId>
+					<groupId>velocity</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		 <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-cas</artifactId>
-            <version>3.2.5.RELEASE</version>
-        </dependency>  
-
+			<version>3.2.5.RELEASE</version>
+        </dependency>  -->
+        
         <!-- testing dependencies -->
         <dependency>
             <groupId>com.evolveum.midpoint.model</groupId>
             <artifactId>model-test</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -657,206 +659,22 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
 
-            <dependencies>
-                <dependency>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
+	    <dependencies>
+		<dependency>
+                        <artifactId>jaxb-impl</artifactId>
+                        <groupId>com.sun.xml.bind</groupId>
                 </dependency>
                 <dependency>
-                    <artifactId>jaxb-api</artifactId>
-                    <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <groupId>javax.xml.bind</groupId>
                 </dependency>
                 <dependency>
-                    <artifactId>jaxb-core</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </dependency>
-            </dependencies>
+                        <artifactId>jaxb-core</artifactId>
+                        <groupId>com.sun.xml.bind</groupId>
+		</dependency>
+	    </dependencies>
 
         </profile>
-        <profile>
-            <id>debian</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.8</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <configuration>
-                                    <target>
-                                        <!-- move  WEB-INF/web.xml to WEB-INF/web_default.xml  WEB-INF/web.xml. Simbolic link will be created web.xml -> web_default.xml -->
-                                        <move file="${project.build.directory}/midpoint/WEB-INF/web.xml" tofile="${project.build.directory}/midpoint/WEB-INF/web_default.xml"/>
-                                        <move file="${project.build.directory}/midpoint/WEB-INF/ctx-web-security.xml" tofile="${project.build.directory}/midpoint/WEB-INF/ctx-web-security_default.xml"/>
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>jdeb</artifactId>
-                        <groupId>org.vafer</groupId>
-                        <version>1.3</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jdeb</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- set name of package -->
-                                    <deb>${project.build.directory}/odn-midpoint_all.deb</deb>
-                                    <dataSet>
-                                        <!-- copy  etc/ -->
-                                        <data>
-                                            <src>${basedir}/src/deb/etc/</src>
-                                            <type>directory</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/etc</prefix>
-                                            </mapper>
-                                        </data>
-                                        <!-- copy  midpoint.home -->
-                                        <data>
-                                            <src>${basedir}/src/deb/var/lib/midpoint.home</src>
-                                            <type>directory</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/var/lib/midpoint.home</prefix>
-                                            </mapper>
-                                        </data>
-                                        <!-- copy  odn-midpoint -->
-                                        <data>
-                                            <src>${basedir}/src/deb/usr/share/odn-midpoint</src>
-                                            <type>directory</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/usr/share/odn-midpoint</prefix>
-                                            </mapper>
-                                        </data>
-                                        <!-- create folders cache, log and tmp for odn-midpoint -->
-                                        <data>
-                                            <type>template</type>
-                                            <paths>
-                                                <path>/var/cache/odn-midpoint</path>
-                                                <path>/var/log/odn-midpoint</path>
-                                                <path>/var/tmp/odn-midpoint</path>
-                                            </paths>
-                                        </data>
-                                        <!-- create link /etc/odn-midpoint/midpoint/config.xml -> var/lib/midpoint.home/config.xml -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/etc/odn-midpoint/midpoint/config.xml</linkName>
-                                            <linkTarget>/var/lib/midpoint.home/config.xml</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>            
-                                        <!-- create link  /etc/odn-midpoint/midpoint/ctx-web-security.xml ->  /usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/etc/odn-midpoint/midpoint/ctx-web-security.xml</linkName>
-                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>       
-                                         <!-- create link /etc/odn-midpoint/midpoint/web.xml -> usr/share/odn-midpoint/midpoint/WEB-INF/web.xml -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/etc/odn-midpoint/midpoint/web.xml</linkName>
-                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/web.xml</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>     
-                                        <!-- create link ctx-web-security.xml -> ctx-web-security_default.xml -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security.xml</linkName>
-                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/ctx-web-security_default.xml</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>    
-                                        <!-- create link web.xml to web_default.xml -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/usr/share/odn-midpoint/midpoint/WEB-INF/web.xml</linkName>
-                                            <linkTarget>/usr/share/odn-midpoint/midpoint/WEB-INF/web_default.xml</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>                                                    
-                                        
-                                        <!-- create link usr/share/odn-midpoint/conf -> /etc/odn-midpoint/tomcat  -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/usr/share/odn-midpoint/conf</linkName>
-                                            <linkTarget>/etc/odn-midpoint/tomcat</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>
-                                        <!-- create link /usr/share/odn-midpoint/logs -> for /var/log/odn-midpoint/ -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/usr/share/odn-midpoint/logs</linkName>
-                                            <linkTarget>/var/log/odn-midpoint/</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>
-                                        <!-- create link /usr/share/odn-midpoint/work ->  /var/cache/odn-midpoint/ -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/usr/share/odn-midpoint/work</linkName>
-                                            <linkTarget>/var/cache/odn-midpoint/</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>
-                                        <!-- create link /usr/share/odn-midpoint/temp ->  var/tmp/odn-midpoint -->
-                                        <data>
-                                            <type>link</type>
-                                            <linkName>/usr/share/odn-midpoint/temp</linkName>
-                                            <linkTarget>/var/tmp/odn-midpoint</linkTarget>
-                                            <symlink>true</symlink>
-                                            <mapper>
-                                                <type>perm</type>
-                                            </mapper>
-                                        </data>
-                                        <!-- copy  midpoint war -->
-                                        <data>
-                                            <src>${project.build.directory}/midpoint</src>
-                                            <type>directory</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/usr/share/odn-midpoint/midpoint</prefix>
-                                            </mapper>
-                                        </data>
-                                    </dataSet>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+
     </profiles>
 </project>

@@ -28,6 +28,7 @@ import com.evolveum.midpoint.prism.query.ObjectQuery;
 import com.evolveum.midpoint.schema.result.OperationResult;
 import com.evolveum.midpoint.task.api.Task;
 import com.evolveum.midpoint.util.exception.SchemaException;
+import com.evolveum.midpoint.util.exception.SecurityViolationException;
 import com.evolveum.midpoint.util.logging.LoggingUtils;
 import com.evolveum.midpoint.util.logging.Trace;
 import com.evolveum.midpoint.util.logging.TraceManager;
@@ -38,11 +39,9 @@ import com.evolveum.midpoint.web.component.menu.cog.InlineMenuItemAction;
 import com.evolveum.midpoint.web.component.util.LoadableModel;
 import com.evolveum.midpoint.web.component.util.SimplePanel;
 import com.evolveum.midpoint.web.page.admin.users.component.AssignableOrgPopupContent;
-import com.evolveum.midpoint.web.page.admin.users.component.AssignablePopupContent;
 import com.evolveum.midpoint.web.page.admin.users.component.AssignableRolePopupContent;
 import com.evolveum.midpoint.web.page.admin.users.dto.UserDtoStatus;
 import com.evolveum.midpoint.xml.ns._public.common.common_3.*;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -55,7 +54,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import javax.xml.namespace.QName;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -241,6 +239,17 @@ public class AssignmentTablePanel<T extends ObjectType> extends SimplePanel<Assi
             @Override
             protected void handlePartialError(OperationResult result) {
                 AssignmentTablePanel.this.handlePartialError(result);
+            }
+
+            @Override
+            protected PrismObject<UserType> getUserDefinition() {
+                try {
+                    return getPageBase().getSecurityEnforcer().getPrincipal().getUser().asPrismObject();
+                } catch (SecurityViolationException e) {
+                    LOGGER.error("Could not retrieve logged user for security evaluation.", e);
+                }
+
+                return null;
             }
         });
         add(assignWindow);
