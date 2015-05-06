@@ -590,7 +590,7 @@
 		
 		<!-- Uncomment following if you want midpoint to be a part of SSO using CAS server-->
 		<!-- SSO CAS Client dependencies -->
-	<!--	<dependency>
+		<dependency>
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-integration-tomcat-v7</artifactId>
 			<version>3.3.3</version>
@@ -618,7 +618,7 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-cas</artifactId>
 			<version>3.2.5.RELEASE</version>
-        </dependency>  -->
+        </dependency>  
         
         <!-- testing dependencies -->
         <dependency>
@@ -675,7 +675,7 @@
 	    </dependencies>
 
         </profile>
-   <profile>
+        <profile>
             <id>debian</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
