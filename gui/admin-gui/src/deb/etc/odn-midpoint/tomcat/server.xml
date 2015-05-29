@@ -72,7 +72,7 @@
         <Connector port="18080" protocol="HTTP/1.1"
                connectionTimeout="20000"
                URIEncoding="UTF-8"
-               redirectPort="18443" address="127.0.0.1"/>
+               redirectPort="18443" address="127.0.0.1" />
         <!-- A "Connector" using the shared thread pool-->
 
 

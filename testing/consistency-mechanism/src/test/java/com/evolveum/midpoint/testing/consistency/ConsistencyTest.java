@@ -543,7 +543,7 @@ public class ConsistencyTest extends AbstractModelIntegrationTest {
 				.findContainer(SchemaTestConstants.ICFC_CONFIGURATION_PROPERTIES);
 		assertNotNull("No configuration properties container in " + resource + " from " + source,
 				configPropsContainer);
-		List<Item<?>> configProps = configPropsContainer.getValue().getItems();
+		List<? extends Item<?,?>> configProps = configPropsContainer.getValue().getItems();
 		assertEquals("Wrong number of config properties in " + resource + " from " + source, numConfigProps,
 				configProps.size());
 		PrismProperty<Object> credentialsProp = configPropsContainer.findProperty(new QName(
@@ -1628,9 +1628,9 @@ public class ConsistencyTest extends AbstractModelIntegrationTest {
 		assertNotNull(name + "'s account must contain reference on the resource", resourceAccount.getResourceRef());
 		assertEquals(resourceTypeOpenDjrepo.getOid(), resourceAccount.getResourceRef().getOid());
 		
-//		if (modify){
-//			assertNull(name + "'s account must not have object change", resourceAccount.getObjectChange());
-//		}
+		if (modify){
+			assertNull(name + "'s account must not have object change", resourceAccount.getObjectChange());
+		}
 		
 		return resourceAccount;
 //		assertNotNull("Identifier in the angelica's account after discovery must not be null.",ResourceObjectShadowUtil.getAttributesContainer(faieldAccount).getIdentifier().getRealValue());
@@ -2155,7 +2155,7 @@ public class ConsistencyTest extends AbstractModelIntegrationTest {
 
 		final OperationResult result = new OperationResult(ConsistencyTest.class.getName() + "." + TEST_NAME);
 
-LOGGER.info("starting rename");
+		LOGGER.info("starting rename");
 		
 		openDJController.executeRenameChange(LDIF_MODIFY_RENAME_FILENAME);
 		LOGGER.info("rename ended");

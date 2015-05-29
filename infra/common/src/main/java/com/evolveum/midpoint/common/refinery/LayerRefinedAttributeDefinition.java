@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import com.evolveum.midpoint.prism.ItemDefinition;
 import com.evolveum.midpoint.prism.PrismContext;
+import com.evolveum.midpoint.prism.PrismPropertyDefinition;
 import com.evolveum.midpoint.prism.delta.ItemDelta;
 import com.evolveum.midpoint.prism.delta.PropertyDelta;
 import com.evolveum.midpoint.prism.path.ItemPath;
@@ -61,9 +62,9 @@ public class LayerRefinedAttributeDefinition<T> extends RefinedAttributeDefiniti
 		return new LayerRefinedAttributeDefinition<T>(rAttrDef, layer);
 	}
 	
-	static List<LayerRefinedAttributeDefinition> wrapCollection(
+	static List<LayerRefinedAttributeDefinition<?>> wrapCollection(
 			Collection<? extends ItemDefinition> defs, LayerType layer) {
-		List outs = new ArrayList<LayerRefinedAttributeDefinition>(defs.size());
+		List outs = new ArrayList<LayerRefinedAttributeDefinition<?>>(defs.size());
 		for (ItemDefinition itemDef: defs) {
             if (itemDef instanceof LayerRefinedAttributeDefinition) {
                 outs.add(itemDef);
@@ -81,12 +82,12 @@ public class LayerRefinedAttributeDefinition<T> extends RefinedAttributeDefiniti
 	}
 
 	@Override
-	public ResourceAttribute instantiate() {
+	public ResourceAttribute<T> instantiate() {
 		return refinedAttributeDefinition.instantiate();
 	}
 
 	@Override
-	public ResourceAttribute instantiate(QName name) {
+	public ResourceAttribute<T> instantiate(QName name) {
 		return refinedAttributeDefinition.instantiate(name);
 	}
 
@@ -349,12 +350,12 @@ public class LayerRefinedAttributeDefinition<T> extends RefinedAttributeDefiniti
 	}
 
 	@Override
-	public boolean isValidFor(QName elementQName, Class<? extends ItemDefinition> clazz) {
+	public boolean isValidFor(QName elementQName, Class clazz) {
 		return isValidFor(elementQName, clazz, false);
 	}
 
 	@Override
-	public boolean isValidFor(QName elementQName, Class<? extends ItemDefinition> clazz, boolean caseInsensitive) {
+	public boolean isValidFor(QName elementQName, Class clazz, boolean caseInsensitive) {
 		return refinedAttributeDefinition.isValidFor(elementQName, clazz, caseInsensitive);
 	}
 

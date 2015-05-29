@@ -46,7 +46,7 @@
             <a href="https://wiki.evolveum.com/display/midPoint/Data+Model">https://wiki.evolveum.com/display/midPoint/Data+Model</a>
             for more details.
 
-            <p>Version: 3.2-SNAPSHOT</p>
+            <p>Version: 3.1.1</p>
 
             <p>Recommended namespace prefix: (default), c</p>
         </xsd:documentation>
@@ -2406,6 +2406,16 @@
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
+            <xsd:element name="metadata" type="tns:MetadataType" minOccurs="0">
+            	<xsd:annotation>
+            		<xsd:documentation>
+            			Timestamps and general metadata describing the credential change.
+            		</xsd:documentation>
+            		<xsd:appinfo>
+            			<a:operational>true</a:operational>
+            		</xsd:appinfo>
+            	</xsd:annotation>
+            </xsd:element>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:long" use="optional"/>
     </xsd:complexType>
@@ -2461,7 +2471,23 @@
         			</xsd:documentation>
         		</xsd:annotation>
         	</xsd:element>
-            <!--  TODO: sabri  -->
+        	
+        	  	<xsd:element minOccurs="0" maxOccurs="1" name="questionAnswer" type="t:ProtectedStringType">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				Answer to the question
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	
+        	  <xsd:element name="enabled" type="xsd:boolean" minOccurs="0" default="true">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>Flag indicating that this particular question is enabled.
+                           It can be used to temporarily disable a question.</p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -7667,6 +7693,24 @@
                 <xsd:sequence>
                     <xsd:element name="lifetime" type="c:PasswordLifeTimeType" minOccurs="1" maxOccurs="1"/>
                     <xsd:element name="stringPolicy" type="c:StringPolicyType" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element name="minOccurs" type="xsd:string" minOccurs="0">
+                    	<xsd:annotation>
+                    		<xsd:documentation>
+                    			Minimal number of value occurences. minOccurs set to zero means that the value
+                    			is optional.
+                    			E.g. when applied to passwords the minOccurs=0 means that the policy will
+                    			accept no password at all. But it will still validate the password using
+                    			stringPolicy if a password is present.
+                    		</xsd:documentation>
+                    	</xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="maxOccurs" type="xsd:string" minOccurs="0">
+                    	<xsd:annotation>
+                    		<xsd:documentation>
+                    			Maximal number of value occurences.
+                    		</xsd:documentation>
+                    	</xsd:annotation>
+                    </xsd:element>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -8020,7 +8064,7 @@
                                 TODO: better documentation
                             </xsd:documentation>
                             <xsd:appinfo>
-                    			<a:objectReferenceTargetType>tns:ValuePolicyType</a:objectReferenceTargetType>
+                    			<a:objectReferenceTargetType>tns:SecurityPolicyType</a:objectReferenceTargetType>
                     		</xsd:appinfo>
                         </xsd:annotation>
                     </xsd:element>
@@ -8714,8 +8758,6 @@
                 	</xsd:element>
                 	<xsd:element name="credentials" type="tns:CredentialsPolicyType" minOccurs="0">
                 	</xsd:element>
-                    <!--  TODO: radovan -->
-                    
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -8759,6 +8801,72 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	
+	 <xsd:complexType name="AbstractCredentialPolicyType" abstract="true">
+		<xsd:annotation>
+			<xsd:documentation>
+				Structure that specifies common elements to all the credential policies.
+			</xsd:documentation>
+			<xsd:appinfo>
+				<a:container/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="resetMethod" type="c:CredentialsResetMethodType" minOccurs="0" maxOccurs="1">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="CredentialsResetMethodType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Specifies the method of resetting the credential. This usually applies to a
+				self-service credential reset.
+			</xsd:documentation>
+			<xsd:appinfo>
+				<a:container/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="resetType" type="c:CredentialsResetTypeType" minOccurs="0" maxOccurs="1" default="none">
+				<xsd:annotation>
+					<xsd:documentation>
+						The type of credential reset.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+    <xsd:simpleType name="CredentialsResetTypeType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <jaxb:typesafeEnumClass/>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="none">
+                <xsd:annotation>
+                	<xsd:documentation>
+                		Credential reset is disabled.
+                	</xsd:documentation>
+                    <xsd:appinfo>
+                        <jaxb:typesafeEnumMember name="NONE"/>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="securityQuestions">
+                <xsd:annotation>
+                	<xsd:documentation>
+                		Use security questions to reset the credential.
+                	</xsd:documentation>
+                    <xsd:appinfo>
+                        <jaxb:typesafeEnumMember name="SECURITY_QUESTIONS"/>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:enumeration>
+             </xsd:restriction>
+    </xsd:simpleType>
+
 	 <xsd:complexType name="PasswordCredentialsPolicyType">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -8769,18 +8877,22 @@
 				<a:container/>
 			</xsd:appinfo>
 		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="passwordPolicyRef" type="c:ObjectReferenceType" minOccurs="0" maxOccurs="1">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Reference to the password policy settings.
-                            </xsd:documentation>
-                            <xsd:appinfo>
-                    			<a:objectReferenceTargetType>tns:ValuePolicyType</a:objectReferenceTargetType>
-                    		</xsd:appinfo>
-                        </xsd:annotation>
-                    </xsd:element>
-		</xsd:sequence>
+		<xsd:complexContent>
+			<xsd:extension base="tns:AbstractCredentialPolicyType">
+				<xsd:sequence>
+					<xsd:element name="passwordPolicyRef" type="c:ObjectReferenceType" minOccurs="0" maxOccurs="1">
+					    <xsd:annotation>
+					        <xsd:documentation>
+					            Reference to the password policy settings.
+					        </xsd:documentation>
+					        <xsd:appinfo>
+								<a:objectReferenceTargetType>tns:ValuePolicyType</a:objectReferenceTargetType>
+							</xsd:appinfo>
+					    </xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
 	
 	<xsd:complexType name="SecurityQuestionsCredentialsPolicyType">
@@ -8794,20 +8906,26 @@
 				<a:container/>
 			</xsd:appinfo>
 		</xsd:annotation>
-		<xsd:sequence>
-			<!-- TODO: sabri 
-				settings that apply to all questions should go here, like this:
-				<xsd:element name="whatever" type="xsd:string" minOccurs="0"/>
-				This is good place to specify an overall policy, e.g. "display all questions" or "randomly select 3 questions".
-			 -->
-			 <xsd:element name="question" type="tns:SecurityQuestionDefinitionType" minOccurs="0" maxOccurs="unbounded">
-			 	<xsd:annotation>
-			 		<xsd:documentation>
-			 			The set of all the security questions in this policy.
-			 		</xsd:documentation>
-			 	</xsd:annotation>
-			 </xsd:element>
-		</xsd:sequence>
+		<xsd:complexContent>
+			<xsd:extension base="tns:AbstractCredentialPolicyType">
+				<xsd:sequence>
+					   <xsd:element name="questionNumber" type="xsd:int" minOccurs="0"  maxOccurs="1">
+		                <xsd:annotation>
+		                    <xsd:documentation>
+		                       Number of Questions in order to change the passwords
+		                    </xsd:documentation>
+		                </xsd:annotation>
+		            </xsd:element>
+					 <xsd:element name="question" type="tns:SecurityQuestionDefinitionType" minOccurs="0" maxOccurs="unbounded">
+					 	<xsd:annotation>
+					 		<xsd:documentation>
+					 			The set of all the security questions in this policy.
+					 		</xsd:documentation>
+					 	</xsd:annotation>
+					 </xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
 	
 	<xsd:complexType name="SecurityQuestionDefinitionType">
@@ -8843,6 +8961,13 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="questionText" type="xsd:string" maxOccurs="1">
+        	    <xsd:annotation>
+                    <xsd:documentation>
+                        The question itself, or the localization identifier to it.
+                    </xsd:documentation>
+                </xsd:annotation>
+        	</xsd:element>
 			<!-- TODO: sabri 
 				settings that apply to a specific security question should go here, like this:
 				<xsd:element name="something" type="xsd:string" minOccurs="0"/>
@@ -10502,6 +10627,18 @@
         </xsd:sequence>
     </xsd:complexType>
     
+    <xsd:complexType name="ReportParameterType">
+     <xsd:annotation>
+            <xsd:appinfo>
+                <a:container/>
+            </xsd:appinfo>
+        </xsd:annotation>
+       <xsd:sequence>
+            <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax">
+            </xsd:any>
+        </xsd:sequence>
+    </xsd:complexType>
+    
 	<xsd:complexType name="ReportType">
 	    <xsd:annotation>
             <xsd:documentation>
@@ -11006,4 +11143,3 @@
     <xsd:element name="decisionType" type="tns:DecisionType" />
 
 </xsd:schema>
-
