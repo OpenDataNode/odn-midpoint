@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (c) 2010-2013 Evolveum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -288,10 +288,6 @@ public class PrismValuePanel extends Panel {
         ObjectWrapper objectWrapper = valueWrapper.getProperty().getContainer().getObject();
         PrismProperty property = valueWrapper.getProperty().getItem();
         boolean required = property.getDefinition().getMinOccurs() > 0;
-        //enforcing required for user will be enabled later (MID-1048)
-        if (UserType.class.isAssignableFrom(objectWrapper.getObject().getCompileTimeClass())) {
-            required = false;
-        }
 
         Panel component = createTypedInputComponent(id);
 
@@ -395,7 +391,7 @@ public class PrismValuePanel extends Panel {
         } else if(ActivationType.F_LOCKOUT_STATUS.equals(definition.getName())){
             return WebMiscUtil.createEnumPanel(LockoutStatusType.class, id, new PropertyModel<LockoutStatusType>(model, baseExpression), this);
         } else{
-        	
+            
         }
         
         if (DOMUtil.XSD_DATETIME.equals(valueType)) {
@@ -557,18 +553,18 @@ public class PrismValuePanel extends Panel {
     }
 
     private boolean isEnum(PrismProperty property){
-    	PrismPropertyDefinition definition = property.getDefinition();
-////    	Object realValue = property.getAnyRealValue();
-    	if (definition == null){
-    		return property.getValueClass().isEnum();
-    	} 
-//    	
-//    	QName defName = definition.getName();
-//    	Class clazz = definition.getPrismContext().getSchemaRegistry().determineCompileTimeClass(defName);
-//    	
-//    	return ((clazz != null && clazz.isEnum()) || ActivationType.F_ADMINISTRATIVE_STATUS.equals(definition.getName()) 
-//    	 || ActivationType.F_LOCKOUT_STATUS.equals(definition.getName()) || );
-    	return (definition.getAllowedValues() != null && definition.getAllowedValues().size() > 0);
+        PrismPropertyDefinition definition = property.getDefinition();
+////        Object realValue = property.getAnyRealValue();
+        if (definition == null){
+            return property.getValueClass().isEnum();
+        } 
+//      
+//      QName defName = definition.getName();
+//      Class clazz = definition.getPrismContext().getSchemaRegistry().determineCompileTimeClass(defName);
+//      
+//      return ((clazz != null && clazz.isEnum()) || ActivationType.F_ADMINISTRATIVE_STATUS.equals(definition.getName()) 
+//       || ActivationType.F_LOCKOUT_STATUS.equals(definition.getName()) || );
+        return (definition.getAllowedValues() != null && definition.getAllowedValues().size() > 0);
     }
     //TODO - try to get rid of <br> attributes when creating new lines in association attributes pop-up
     private String createAssociationTooltipText(PrismProperty property){
@@ -580,7 +576,7 @@ public class PrismValuePanel extends Panel {
 
             Collection<ResourceAttribute<?>> attributes = ShadowUtil.getAttributes(shadowPrism);
             if (attributes == null || attributes.isEmpty()){
-            	return sb.toString();
+                return sb.toString();
             }
 
             //TODO - this is a dirty fix for situation, when attribute value is too long and it is a string without white chars,
@@ -588,14 +584,14 @@ public class PrismValuePanel extends Panel {
             //are doing here is replacing every, with ,&#8203;, &#8203; (the same with @) is a zero-width space, so the attribute value
             //will break after comma. This dirty fix will be removed when association editor is completed.
             for (ResourceAttribute<?> attr : attributes){
-            	for (Object realValue : attr.getRealValues()){
-            		sb.append(getAttributeName(attr));
-                	sb.append(":");
+                for (Object realValue : attr.getRealValues()){
+                    sb.append(getAttributeName(attr));
+                    sb.append(":");
                     if (realValue != null) {
                         sb.append(realValue.toString().replace(",", ",&#8203;").replace("@", "@&#8203;").replace("_", "@&#8203;"));
                     }
-            		sb.append("<br>");
-            	}
+                    sb.append("<br>");
+                }
             }
         }
 
@@ -603,22 +599,22 @@ public class PrismValuePanel extends Panel {
     }
 
     private String getAttributeName(ResourceAttribute<?> attr) {
-		if (attr.getDisplayName() != null){
-			return attr.getDisplayName();
-		}
-		
-		if (attr.getNativeAttributeName() != null){
-			return attr.getNativeAttributeName();
-		}
-		
-		if (attr.getElementName() != null){
-			return attr.getElementName().getLocalPart();
-		}
-		
-		return null; //TODO: is this ok?? or better is exception or some default name??
-	}
+        if (attr.getDisplayName() != null){
+            return attr.getDisplayName();
+        }
+        
+        if (attr.getNativeAttributeName() != null){
+            return attr.getNativeAttributeName();
+        }
+        
+        if (attr.getElementName() != null){
+            return attr.getElementName().getLocalPart();
+        }
+        
+        return null; //TODO: is this ok?? or better is exception or some default name??
+    }
 
-	private void addValue(AjaxRequestTarget target) {
+    private void addValue(AjaxRequestTarget target) {
         ValueWrapper wrapper = model.getObject();
         PropertyWrapper propertyWrapper = wrapper.getProperty();
         propertyWrapper.addValue();
