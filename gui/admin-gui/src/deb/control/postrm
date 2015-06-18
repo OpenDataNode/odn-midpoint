@@ -32,6 +32,10 @@ case "$1" in
         dbname=midpoint
         su - postgres -c "psql -q -c \"DROP DATABASE IF EXISTS ${dbname};\"" 
 
+        # delete user 
+        deluser odn-midpoint || true                
+
+        # remove directories
         rm -rf /var/cache/odn-midpoint
         rm -rf /var/log/odn-midpoint
         rm -rf /var/tmp/odn-midpoint
