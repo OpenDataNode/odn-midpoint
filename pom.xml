@@ -20,7 +20,7 @@
 	<groupId>eu.comsode.idm</groupId>
 	<artifactId>odn-midpoint</artifactId>
 	<packaging>war</packaging>
-	<version>3.4-SNAPSHOT</version>
+	<version>3.4</version>
 
 	<scm>
 		<connection>https://github.com/Evolveum/midpoint.git</connection>
