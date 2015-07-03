@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2010-2013 Evolveum
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<configuration>
+    <midpoint>
+        <global>
+            <extensionDir>./src/test/resources/schema</extensionDir>
+        </global>
+        <repository>
+            <repositoryServiceFactoryClass>com.evolveum.midpoint.repo.sql.testing.TestSqlRepositoryFactory</repositoryServiceFactoryClass>
+            <port>5438</port>
+            <asServer>true</asServer>
+            <!--<baseDir>target</baseDir>-->
+            <dropIfExists>true</dropIfExists>
+
+            <performanceStatisticsLevel>10</performanceStatisticsLevel>
+            <performanceStatisticsFile>./target/performance.log</performanceStatisticsFile>
+        </repository>
+        <audit>
+            <auditService>
+                <auditServiceFactoryClass>com.evolveum.midpoint.audit.impl.LoggerAuditServiceFactory</auditServiceFactoryClass>
+            </auditService>
+            <auditService>
+                <auditServiceFactoryClass>com.evolveum.midpoint.repo.sql.testing.TestSqlAuditServiceFactory</auditServiceFactoryClass>
+            </auditService>
+            <auditService>
+                <auditServiceFactoryClass>com.evolveum.midpoint.test.DummyAuditServiceFactory</auditServiceFactoryClass>
+            </auditService>
+        </audit>
+        <taskManager>
+            <jdbcJobStore>false</jdbcJobStore>
+            <waitingTasksCheckInterval>5</waitingTasksCheckInterval>
+            <testMode>true</testMode>
+            <useThreadInterrupt>whenNecessary</useThreadInterrupt>              <!-- needed for task manager tests -->
+        </taskManager>
+        <icf>
+            <scanClasspath>true</scanClasspath>
+            <scanDirectory>/C:/tmp</scanDirectory>
+            <scanDirectory>/var/tmp</scanDirectory>
+            <scanDirectory>${midpoint.home}/icf-connectors</scanDirectory>
+        </icf>
+        <keystore>
+            <keyStorePath>${midpoint.home}/keystore.jceks</keyStorePath>
+            <keyStorePassword>changeit</keyStorePassword>
+            <encryptionKeyAlias>default</encryptionKeyAlias>
+        </keystore>
+    </midpoint>
+</configuration>

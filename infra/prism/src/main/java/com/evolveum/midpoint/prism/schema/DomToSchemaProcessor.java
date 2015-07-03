@@ -1,0 +1,1040 @@
+/*
+ * Copyright (c) 2010-2015 Evolveum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.evolveum.midpoint.prism.schema;
+
+import static com.evolveum.midpoint.prism.PrismConstants.A_ACCESS;
+import static com.evolveum.midpoint.prism.PrismConstants.A_ACCESS_CREATE;
+import static com.evolveum.midpoint.prism.PrismConstants.A_ACCESS_READ;
+import static com.evolveum.midpoint.prism.PrismConstants.A_ACCESS_UPDATE;
+import static com.evolveum.midpoint.prism.PrismConstants.A_COMPOSITE;
+import static com.evolveum.midpoint.prism.PrismConstants.A_DEPRECATED;
+import static com.evolveum.midpoint.prism.PrismConstants.A_DISPLAY_NAME;
+import static com.evolveum.midpoint.prism.PrismConstants.A_DISPLAY_ORDER;
+import static com.evolveum.midpoint.prism.PrismConstants.A_EXTENSION;
+import static com.evolveum.midpoint.prism.PrismConstants.A_EXTENSION_REF;
+import static com.evolveum.midpoint.prism.PrismConstants.A_HELP;
+import static com.evolveum.midpoint.prism.PrismConstants.A_IGNORE;
+import static com.evolveum.midpoint.prism.PrismConstants.A_INDEXED;
+import static com.evolveum.midpoint.prism.PrismConstants.A_MAX_OCCURS;
+import static com.evolveum.midpoint.prism.PrismConstants.A_OBJECT;
+import static com.evolveum.midpoint.prism.PrismConstants.A_OBJECT_REFERENCE;
+import static com.evolveum.midpoint.prism.PrismConstants.A_OBJECT_REFERENCE_TARGET_TYPE;
+import static com.evolveum.midpoint.prism.PrismConstants.A_OPERATIONAL;
+import static com.evolveum.midpoint.prism.PrismConstants.A_PROPERTY_CONTAINER;
+import static com.evolveum.midpoint.prism.PrismConstants.A_TYPE;
+import static com.evolveum.midpoint.prism.PrismConstants.SCHEMA_DOCUMENTATION;
+import static com.evolveum.midpoint.prism.PrismConstants.SCHEMA_APP_INFO;
+import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.namespace.QName;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.apache.cxf.common.util.ReflectionInvokationHandler.Optional;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.evolveum.midpoint.prism.ComplexTypeDefinition;
+import com.evolveum.midpoint.prism.Definition;
+import com.evolveum.midpoint.prism.DisplayableValueImpl;
+import com.evolveum.midpoint.prism.ItemDefinition;
+import com.evolveum.midpoint.prism.PrismConstants;
+import com.evolveum.midpoint.prism.PrismContainerDefinition;
+import com.evolveum.midpoint.prism.PrismContext;
+import com.evolveum.midpoint.prism.PrismPropertyDefinition;
+import com.evolveum.midpoint.prism.PrismReferenceDefinition;
+import com.evolveum.midpoint.prism.xml.XmlTypeConverter;
+import com.evolveum.midpoint.prism.xml.XsdTypeMapper;
+import com.evolveum.midpoint.util.DOMUtil;
+import com.evolveum.midpoint.util.DisplayableValue;
+import com.evolveum.midpoint.util.exception.SchemaException;
+import com.evolveum.midpoint.util.logging.Trace;
+import com.evolveum.midpoint.util.logging.TraceManager;
+import com.sun.xml.xsom.XSAnnotation;
+import com.sun.xml.xsom.XSComplexType;
+import com.sun.xml.xsom.XSContentType;
+import com.sun.xml.xsom.XSElementDecl;
+import com.sun.xml.xsom.XSFacet;
+import com.sun.xml.xsom.XSModelGroup;
+import com.sun.xml.xsom.XSParticle;
+import com.sun.xml.xsom.XSRestrictionSimpleType;
+import com.sun.xml.xsom.XSSchema;
+import com.sun.xml.xsom.XSSchemaSet;
+import com.sun.xml.xsom.XSTerm;
+import com.sun.xml.xsom.XSType;
+import com.sun.xml.xsom.impl.ElementDecl;
+import com.sun.xml.xsom.parser.XSOMParser;
+import com.sun.xml.xsom.util.DomAnnotationParserFactory;
+
+/**
+ * Parser for DOM-represented XSD, creates midPoint Schema representation.
+ * 
+ * It will parse schema in several passes. It has special handling if the schema is "resource schema", which will
+ * create ResourceObjectDefinition and ResourceObjectAttributeDefinition instead of PropertyContainer and Property. 
+ * 
+ * @author lazyman
+ * @author Radovan Semancik
+ */
+class DomToSchemaProcessor {
+
+	private static final Trace LOGGER = TraceManager.getTrace(DomToSchemaProcessor.class);
+	
+	private PrismSchema schema;
+	private EntityResolver entityResolver;
+	private PrismContext prismContext;
+	private XSSchemaSet xsSchemaSet;
+	private String shortDescription;
+	private boolean isRuntime = false;
+	
+	public EntityResolver getEntityResolver() {
+		return entityResolver;
+	}
+
+	public void setEntityResolver(EntityResolver entityResolver) {
+		this.entityResolver = entityResolver;
+	}
+
+	public PrismContext getPrismContext() {
+		return prismContext;
+	}
+
+	public void setPrismContext(PrismContext prismContext) {
+		this.prismContext = prismContext;
+	}
+	
+	public SchemaRegistry getSchemaRegistry() {
+		return this.prismContext.getSchemaRegistry();
+	}
+
+	private SchemaDefinitionFactory getDefinitionFactory() {
+		return prismContext.getDefinitionFactory();
+	}
+	
+	private String getNamespace() {
+		return schema.getNamespace();
+	}
+	
+	private boolean isMyNamespace(QName qname) {
+		return getNamespace().equals(qname.getNamespaceURI());
+	}
+	
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+	
+	public boolean isRuntime() {
+		return isRuntime;
+	}
+
+	public void setRuntime(boolean isRuntime) {
+		this.isRuntime = isRuntime;
+	}
+
+	/**
+	 * Main entry point.
+	 * 
+	 * 
+	 * @param xsdSchema DOM-represented XSD schema
+	 * @return parsed midPoint schema
+	 * @throws SchemaException in case of any error
+	 */
+	PrismSchema parseDom(PrismSchema prismSchema, Element xsdSchema) throws SchemaException {
+		Validate.notNull(xsdSchema, "XSD schema element must not be null.");
+		
+		schema = prismSchema;
+		
+		initSchema(xsdSchema);
+
+		xsSchemaSet = parseSchema(xsdSchema);
+		if (xsSchemaSet == null) {
+			return schema;
+		}
+		
+		// Create ComplexTypeDefinitions from all top-level complexType definition in the XSD
+		processComplexTypeDefinitions(xsSchemaSet);
+
+		// Create PropertyContainer (and possibly also Property) definition from the top-level elements in XSD
+		// This also creates ResourceObjectDefinition in some cases
+		createDefinitionsFromElements(xsSchemaSet);
+				
+		return schema;
+	}
+
+	private void initSchema(Element xsdSchema) throws SchemaException {
+		String targetNamespace = DOMUtil.getAttribute(xsdSchema, DOMUtil.XSD_ATTR_TARGET_NAMESPACE);
+		if (StringUtils.isEmpty(targetNamespace)) {
+			throw new SchemaException("Schema does not have targetNamespace specification");
+		}
+		schema.setNamespace(targetNamespace);
+	}
+	
+	private XSSchemaSet parseSchema(Element schema) throws SchemaException {
+		// Make sure that the schema parser sees all the namespace declarations
+		DOMUtil.fixNamespaceDeclarations(schema);
+		XSSchemaSet xss = null;
+		try {			
+			TransformerFactory transfac = TransformerFactory.newInstance();
+			Transformer trans = transfac.newTransformer();
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+			DOMSource source = new DOMSource(schema);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			StreamResult result = new StreamResult(out);
+
+			trans.transform(source, result);
+
+			XSOMParser parser = createSchemaParser();
+			InputSource inSource = new InputSource(new ByteArrayInputStream(out.toByteArray()));
+			// XXX: hack: it's here to make entity resolver work...
+			inSource.setSystemId("SystemId");
+			// XXX: end hack
+			inSource.setEncoding("utf-8");
+			
+			parser.parse(inSource);
+			
+			xss = parser.getResult();
+			
+		} catch (SAXException e) {
+			throw new SchemaException("XML error during XSD schema parsing: "
+					+ e.getMessage() + "(embedded exception "+ e.getException()+") in "+shortDescription, e);
+		} catch (TransformerException e) {
+			throw new SchemaException("XML transformer error during XSD schema parsing: "
+					+ e.getMessage() + "(locator: "+e.getLocator()+", embedded exception:"+ e.getException()+") in "+shortDescription, e);
+		} catch (RuntimeException e) {
+			// This sometimes happens, e.g. NPEs in Saxon
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("Unexpected error {} during parsing of schema:\n{}",e.getMessage(),DOMUtil.serializeDOMToString(schema));
+			}
+			throw new SchemaException("XML error during XSD schema parsing: "
+					+ e.getMessage() + " in "+shortDescription, e);
+		}
+
+		return xss;
+	}
+	
+	private XSOMParser createSchemaParser() {
+		XSOMParser parser = new XSOMParser();
+		if (entityResolver == null) {
+			entityResolver = prismContext.getSchemaRegistry();
+			if (entityResolver == null) {
+				throw new IllegalStateException("Entity resolver is not set (even tried to pull it from prism context)");
+			}
+		}
+		SchemaHandler errorHandler = new SchemaHandler(entityResolver);
+		parser.setErrorHandler(errorHandler);
+		parser.setAnnotationParser(new DomAnnotationParserFactory());
+		parser.setEntityResolver(errorHandler);
+
+		return parser;
+	}
+	
+	/**
+	 * Create ComplexTypeDefinitions from all top-level complexType definitions in the XSD.
+	 * 
+	 * These definitions are the reused later to fit inside PropertyContainer definitions.
+	 * 
+	 * @param set XS Schema Set
+	 */
+	private void processComplexTypeDefinitions(XSSchemaSet set) throws SchemaException {
+		Iterator<XSComplexType> iterator = set.iterateComplexTypes();
+		while (iterator.hasNext()) {
+			XSComplexType complexType = iterator.next();
+			if (complexType.getTargetNamespace().equals(schema.getNamespace())) {
+				processComplexTypeDefinition(complexType);
+			}
+		}
+	}
+	
+	private ComplexTypeDefinition getOrProcessComplexType(QName typeName) throws SchemaException {
+		ComplexTypeDefinition complexTypeDefinition = schema.findComplexTypeDefinition(typeName);
+		if (complexTypeDefinition != null) {
+			return complexTypeDefinition;
+		}
+		// The definition is not yet processed (or does not exist). Let's try to process it.
+		XSComplexType complexType = xsSchemaSet.getComplexType(typeName.getNamespaceURI(), typeName.getLocalPart());
+		return processComplexTypeDefinition(complexType);
+	}
+
+
+	/**
+	 * Creates ComplexTypeDefinition object from a single XSD complexType definition.
+	 * @param complexType XS complex type definition
+	 */
+	private ComplexTypeDefinition processComplexTypeDefinition(XSComplexType complexType) throws SchemaException {
+		
+		SchemaDefinitionFactory definitionFactory = getDefinitionFactory();
+		ComplexTypeDefinition ctd = definitionFactory.createComplexTypeDefinition(complexType, prismContext, complexType.getAnnotation());
+		
+		ComplexTypeDefinition existingComplexTypeDefinition = schema.findComplexTypeDefinition(ctd.getTypeName());
+		if (existingComplexTypeDefinition != null) {
+			// We already have this in schema. So avoid redundant work and infinite loops;
+			return existingComplexTypeDefinition;
+		}
+		// Add to the schema right now to avoid loops - even if it is not complete yet
+		// The definition may reference itself
+		schema.add(ctd);
+		
+		XSContentType content = complexType.getContentType();
+        XSContentType explicitContent = complexType.getExplicitContent();
+		if (content != null) {
+			XSParticle particle = content.asParticle();
+			if (particle != null) {
+				XSTerm term = particle.getTerm();
+
+				if (term.isModelGroup()) {
+                    Boolean inherited = null;
+                    if (explicitContent == null || content == explicitContent) {
+                        inherited = false;
+                    }
+					addPropertyDefinitionListFromGroup(term.asModelGroup(), ctd, inherited, explicitContent);
+				}
+			}
+			
+			XSAnnotation annotation = complexType.getAnnotation();
+			Element extensionAnnotationElement = SchemaProcessorUtil.getAnnotationElement(annotation, A_EXTENSION);
+			if (extensionAnnotationElement != null) {
+				QName extensionType = DOMUtil.getQNameAttribute(extensionAnnotationElement, A_EXTENSION_REF.getLocalPart());
+				if (extensionType == null) {
+					throw new SchemaException("The "+A_EXTENSION+"annontation on "+ctd.getTypeName()+" complex type does not have "+A_EXTENSION_REF.getLocalPart()+" attribute",A_EXTENSION_REF);
+				}
+				ctd.setExtensionForType(extensionType);
+			}
+		}
+		
+		markRuntime(ctd);
+
+        if (complexType.isAbstract()) {
+            ctd.setAbstract(true);
+        }
+		
+		QName superType = determineSupertype(complexType);
+		if (superType != null) {
+			ctd.setSuperType(superType);
+		}
+		
+		if (isObjectDefinition(complexType)) {
+			ctd.setObjectMarker(true);
+		}
+		if (isPropertyContainer(complexType)) {
+			ctd.setContainerMarker(true);
+		}
+		
+		if (isAny(complexType)) {
+			ctd.setXsdAnyMarker(true);
+		}
+
+        extractDocumentation(ctd, complexType.getAnnotation());
+		
+		if (getSchemaRegistry() != null) {
+			Class<?> compileTimeClass = getSchemaRegistry().determineCompileTimeClass(ctd);
+			ctd.setCompileTimeClass(compileTimeClass);
+		}
+		
+		definitionFactory.finishComplexTypeDefinition(ctd, complexType, prismContext, complexType.getAnnotation());
+		
+		// Attempt to create object or container definition from this complex type
+		
+		PrismContainerDefinition<?> defFromComplexType = getDefinitionFactory().createExtraDefinitionFromComplexType(complexType, 
+				ctd, prismContext, complexType.getAnnotation());
+		
+		if (defFromComplexType != null) {
+			markRuntime(defFromComplexType);
+			schema.add(defFromComplexType);
+		}
+		
+		return ctd;
+
+	}
+
+    private void extractDocumentation(Definition definition, XSAnnotation annotation) {
+        if (annotation == null) {
+            return;
+        }
+        Element documentationElement = SchemaProcessorUtil.getAnnotationElement(annotation, DOMUtil.XSD_DOCUMENTATION_ELEMENT);
+        if (documentationElement != null) {
+            // The documentation may be HTML-formatted. Therefore we want to keep the formatting and tag names
+            String documentationText = DOMUtil.serializeElementContent(documentationElement);
+            definition.setDocumentation(documentationText);
+        }
+    }
+
+    /**
+	 * Creates ComplexTypeDefinition object from a XSModelGroup inside XSD complexType definition.
+	 * This is a recursive method. It can create "anonymous" internal PropertyContainerDefinitions.
+	 * The definitions will be added to the ComplexTypeDefinition provided as parameter.
+     * @param group XSD XSModelGroup
+     * @param ctd ComplexTypeDefinition that will hold the definitions
+     * @param inherited Are these properties inherited? (null means we don't know and we'll determine that from explicitContent)
+     * @param explicitContent Explicit (i.e. non-inherited) content of the type being parsed - filled-in only for subtypes!
+     */
+	private void addPropertyDefinitionListFromGroup(XSModelGroup group, ComplexTypeDefinition ctd, Boolean inherited, XSContentType explicitContent) throws SchemaException {
+
+		XSParticle[] particles = group.getChildren();
+		for (XSParticle p : particles) {
+            boolean particleInherited =
+                    inherited != null ? inherited : (p != explicitContent);
+			XSTerm pterm = p.getTerm();
+			if (pterm.isModelGroup()) {
+				addPropertyDefinitionListFromGroup(pterm.asModelGroup(), ctd, particleInherited, explicitContent);
+			}
+
+			// xs:element inside complex type
+			if (pterm.isElementDecl()) {
+				XSAnnotation annotation = selectAnnotationToUse(p.getAnnotation(), pterm.getAnnotation());
+
+				XSElementDecl elementDecl = pterm.asElementDecl();
+				QName elementName = new QName(elementDecl.getTargetNamespace(), elementDecl.getName());
+				QName typeFromAnnotation = getTypeAnnotation(p.getAnnotation());
+				
+				XSType xsType = elementDecl.getType();
+			
+				if (isObjectReference(xsType, annotation)) {
+				
+					processObjectReferenceDefinition(xsType, elementName, annotation, ctd, p, particleInherited);
+				
+				} else if (isObjectDefinition(xsType)) {					
+					// This is object reference. It also has its *Ref equivalent which will get parsed.
+					// therefore it is safe to ignore
+
+				} else if (xsType.getName() == null && typeFromAnnotation == null) {					
+					
+					if (isAny(xsType)) {
+						if (isPropertyContainer(elementDecl)) {
+							XSAnnotation containerAnnotation = xsType.getAnnotation();
+							PrismContainerDefinition<?> containerDefinition = createPropertyContainerDefinition(xsType, p,
+									null, containerAnnotation, false);
+                            containerDefinition.setInherited(particleInherited);
+							ctd.addDefinition(containerDefinition);
+						} else {
+							PrismPropertyDefinition propDef = createPropertyDefinition(xsType, elementName, DOMUtil.XSD_ANY,
+									ctd, annotation, p);
+                            propDef.setInherited(particleInherited);
+							ctd.addDefinition(propDef);
+						}
+					}
+
+				} else if (isPropertyContainer(elementDecl)) {
+					
+					// Create an inner PropertyContainer. It is assumed that this is a XSD complex type
+					XSComplexType complexType = (XSComplexType)xsType;
+					ComplexTypeDefinition complexTypeDefinition = null;
+					if (typeFromAnnotation != null && complexType != null && !typeFromAnnotation.equals(getType(xsType))) {
+						// There is a type override annotation. The type that the schema parser determined is useless
+						// We need to locate our own complex type definition
+						if (isMyNamespace(typeFromAnnotation)) {
+							complexTypeDefinition = getOrProcessComplexType(typeFromAnnotation);
+						} else {
+							complexTypeDefinition = getPrismContext().getSchemaRegistry().findComplexTypeDefinition(typeFromAnnotation);
+						}
+						if (complexTypeDefinition == null) {
+							throw new SchemaException("Cannot find definition of complex type "+typeFromAnnotation+
+									" as specified in type override annotation at "+elementName);
+						}
+					} else {
+						complexTypeDefinition = processComplexTypeDefinition(complexType);
+					}
+					XSAnnotation containerAnnotation = complexType.getAnnotation();
+					PrismContainerDefinition<?> containerDefinition = createPropertyContainerDefinition(xsType, p, 
+							complexTypeDefinition, containerAnnotation, false);
+					if (isAny(xsType)) {
+						containerDefinition.setRuntimeSchema(true);
+						containerDefinition.setDynamic(true);
+					}
+                    containerDefinition.setInherited(particleInherited);
+					ctd.addDefinition(containerDefinition);
+										
+				} else {
+										
+					// Create a property definition (even if this is a XSD complex type)
+					QName typeName = new QName(xsType.getTargetNamespace(), xsType.getName());
+
+					PrismPropertyDefinition propDef = createPropertyDefinition(xsType, elementName, typeName, ctd, annotation, p);
+					propDef.setInherited(particleInherited);
+					ctd.add(propDef);
+				}
+			}
+		}
+	}
+	
+	private PrismReferenceDefinition processObjectReferenceDefinition(XSType xsType, QName elementName,
+			XSAnnotation annotation, ComplexTypeDefinition containingCtd, XSParticle elementParticle, boolean inherited) throws SchemaException {
+		QName typeName = new QName(xsType.getTargetNamespace(), xsType.getName());
+		QName primaryElementName = elementName;
+		Element objRefAnnotationElement = SchemaProcessorUtil.getAnnotationElement(annotation, A_OBJECT_REFERENCE);
+		boolean hasExplicitPrimaryElementName = (objRefAnnotationElement != null && !StringUtils.isEmpty(objRefAnnotationElement.getTextContent()));
+		if (hasExplicitPrimaryElementName) {
+			primaryElementName = DOMUtil.getQNameValue(objRefAnnotationElement);
+		}
+		PrismReferenceDefinition definition = null;
+		if (containingCtd != null) {
+			definition = containingCtd.findItemDefinition(primaryElementName, PrismReferenceDefinition.class);
+		}
+		if (definition == null) {
+			SchemaDefinitionFactory definitionFactory = getDefinitionFactory();
+			definition = definitionFactory.createReferenceDefinition(primaryElementName, typeName, containingCtd, prismContext, annotation, elementParticle);
+            definition.setInherited(inherited);
+			if (containingCtd != null) {
+				containingCtd.add(definition);
+			}
+		}
+		if (hasExplicitPrimaryElementName) {
+			// The elements that have explicit type name determine the target type name (if not yet set)
+			if (definition.getTargetTypeName() == null) {
+				definition.setTargetTypeName(typeName);
+			}
+			if (definition.getCompositeObjectElementName() == null) {
+				definition.setCompositeObjectElementName(elementName);
+			}
+		} else {
+			// The elements that use default element names override type definition
+			// as there can be only one such definition, therefore the behavior is deterministic
+			definition.setTypeName(typeName);
+		}
+		Element targetTypeAnnotationElement = SchemaProcessorUtil.getAnnotationElement(annotation, A_OBJECT_REFERENCE_TARGET_TYPE);
+		if (targetTypeAnnotationElement != null && !StringUtils.isEmpty(targetTypeAnnotationElement.getTextContent())) {
+			// Explicit definition of target type overrides previous logic
+			QName targetType = DOMUtil.getQNameValue(targetTypeAnnotationElement);
+			definition.setTargetTypeName(targetType);
+		}
+		setMultiplicity(definition, elementParticle, annotation, false);
+		Boolean composite = SchemaProcessorUtil.getAnnotationBooleanMarker(annotation, A_COMPOSITE);
+		if (composite != null) {
+			definition.setComposite(composite);
+		}
+        extractDocumentation(definition, annotation);
+		return definition;
+	}
+
+	private void setMultiplicity(ItemDefinition itemDef, XSParticle particle, XSAnnotation annotation, boolean topLevel) {
+		if (topLevel || particle == null) {
+			itemDef.setMinOccurs(0);
+			Element maxOccursAnnotation = SchemaProcessorUtil.getAnnotationElement(annotation, A_MAX_OCCURS);
+			if (maxOccursAnnotation != null) {
+				String maxOccursString = maxOccursAnnotation.getTextContent();
+				int maxOccurs = XsdTypeMapper.multiplicityToInteger(maxOccursString);
+				itemDef.setMaxOccurs(maxOccurs);
+			} else {
+				itemDef.setMaxOccurs(-1);
+			}
+		} else {
+            //itemDef.setMinOccurs(particle.getMinOccurs());
+            //itemDef.setMaxOccurs(particle.getMaxOccurs());
+			itemDef.setMinOccurs(particle.getMinOccurs().intValue());
+			itemDef.setMaxOccurs(particle.getMaxOccurs().intValue());
+		}
+	}
+
+	/**
+	 * Create PropertyContainer (and possibly also Property) definition from the top-level elements in XSD.
+	 * Each top-level element will be interpreted as a potential PropertyContainer. The element name will be set as
+	 * name of the PropertyContainer, element type will become type (indirectly through ComplexTypeDefinition).
+	 * 
+	 * No need to recurse here. All the work was already done while creating ComplexTypeDefinitions.
+	 * 
+	 * @param set XS Schema Set
+	 * @throws SchemaException
+	 */
+	private void createDefinitionsFromElements(XSSchemaSet set) throws SchemaException {
+		Iterator<XSElementDecl> iterator = set.iterateElementDecls();
+		while (iterator.hasNext()) {
+			XSElementDecl xsElementDecl = iterator.next();
+			if (isDeprecated(xsElementDecl)) {
+				// Safe to ignore. We want it in the XSD schema only. The real definition will be
+				// parsed from the non-deprecated variant
+			}
+			
+			if (xsElementDecl.getTargetNamespace().equals(schema.getNamespace())) {
+				
+				QName elementName = new QName(xsElementDecl.getTargetNamespace(),xsElementDecl.getName());
+				XSType xsType = xsElementDecl.getType();
+				if (xsType == null) {
+					throw new SchemaException("Found element "+elementName+" without type definition");
+				}
+				QName typeQName = determineType(xsElementDecl);
+				if (typeQName == null) {
+					// No type defined, safe to skip
+					continue;
+					//throw new SchemaException("Found element "+elementName+" with incomplete type name: {"+xsType.getTargetNamespace()+"}"+xsType.getName());
+				}
+				XSAnnotation annotation = xsElementDecl.getAnnotation();
+				
+				if (isPropertyContainer(xsElementDecl) || isObjectDefinition(xsType)) {
+					
+					ComplexTypeDefinition complexTypeDefinition = schema.findComplexTypeDefinition(typeQName);
+					PrismContainerDefinition<?> propertyContainerDefinition = createPropertyContainerDefinition(xsType, xsElementDecl,
+							complexTypeDefinition, annotation, null, true);
+					schema.getDefinitions().add(propertyContainerDefinition);
+					
+				} else if (isObjectReference(xsElementDecl, xsType)) {
+						
+						PrismReferenceDefinition refDef = processObjectReferenceDefinition(xsType, elementName, annotation, 
+								null, null, false);
+
+						schema.getDefinitions().add(refDef);
+					
+				} else {
+					
+					// Create a top-level property definition (even if this is a XSD complex type)
+					PrismPropertyDefinition propDef = createPropertyDefinition(xsType, elementName, typeQName, null, 
+							xsElementDecl.getAnnotation(), null);
+					schema.getDefinitions().add(propDef);
+				}
+				
+			} else if (xsElementDecl.getTargetNamespace().equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+				// This is OK to ignore. These are imported elements from other schemas
+//				} else {
+//					throw new SchemaException("Found element "+xsElementDecl.getName()+" with wrong namespace "+xsElementDecl.getTargetNamespace()+" while expecting "+schema.getNamespace());
+			}
+		}
+	}
+	
+	private QName determineType(XSElementDecl xsElementDecl) {
+		// Check for a:type annotation. If present, this overrides the type
+		QName type = getTypeAnnotation(xsElementDecl);
+		if (type != null) {
+			return type;
+		}
+		XSType xsType = xsElementDecl.getType();
+		if (xsType == null) {
+			return null;
+		}
+		return getType(xsType);		
+	}
+	
+	private QName getType(XSType xsType) {
+		if (xsType.getName() == null) {
+			return null;
+		}
+		return new QName(xsType.getTargetNamespace(), xsType.getName());
+	}
+
+	private QName getTypeAnnotation(XSElementDecl xsElementDecl) {
+		XSAnnotation annotation = xsElementDecl.getAnnotation();
+		return getTypeAnnotation(annotation);
+	}
+	
+	private QName getTypeAnnotation(XSAnnotation annotation) {
+		return SchemaProcessorUtil.getAnnotationQName(annotation, A_TYPE);
+	}
+	
+	/**
+	 * Determine whether the definition contains xsd:any (directly or indirectly)
+	 */
+	private boolean isAny(XSType xsType) {
+		if (xsType instanceof XSComplexType) {
+			XSComplexType complexType = (XSComplexType)xsType;
+			XSContentType contentType = complexType.getContentType();
+			if (contentType != null) {
+				XSParticle particle = contentType.asParticle();
+				if (particle != null) {
+					XSTerm term = particle.getTerm();
+					if (term != null) {
+						return isAny(term);
+					}
+				}
+			}
+		}		
+		return false;
+	}
+	
+	private QName determineSupertype(XSComplexType complexType) {
+		XSType baseType = complexType.getBaseType();
+		if (baseType == null) {
+			return null;
+		}
+		if (baseType.getName().equals("anyType")) {
+			return null;
+		}
+		return new QName(baseType.getTargetNamespace(),baseType.getName());
+	}
+
+	/**
+	 * Determine whether the definition contains xsd:any (directly or indirectly)
+	 */
+	private boolean isAny(XSTerm term) {
+		if (term.isWildcard()) {
+			return true;
+		}
+		if (term.isModelGroup()) {
+			XSParticle[] children = term.asModelGroup().getChildren();
+			if (children != null) {
+				for (XSParticle childParticle: children) {
+					XSTerm childTerm = childParticle.getTerm();
+					if (childTerm != null) {
+						if (isAny(childTerm)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean isPropertyContainer(XSElementDecl xsElementDecl) {
+		Element annoElement = SchemaProcessorUtil.getAnnotationElement(xsElementDecl.getAnnotation(), A_PROPERTY_CONTAINER);
+		if (annoElement != null) {
+			return true;
+		}
+		return isPropertyContainer(xsElementDecl.getType());
+	}
+
+	/**
+	 * Returns true if provides XSD type is a property container. It looks for annotations.
+	 */
+	private boolean isPropertyContainer(XSType xsType) {
+		Element annoElement = SchemaProcessorUtil.getAnnotationElement(xsType.getAnnotation(), A_PROPERTY_CONTAINER);
+		if (annoElement != null) {
+			return true;
+		}
+		if (xsType.getBaseType() != null && !xsType.getBaseType().equals(xsType)) {
+			return isPropertyContainer(xsType.getBaseType());
+		}
+		return false;
+	}
+	
+	private boolean isObjectReference(XSElementDecl xsElementDecl, XSType xsType) {
+		XSAnnotation annotation = xsType.getAnnotation();
+		return isObjectReference(xsType, annotation);
+	}
+	
+	private boolean isObjectReference(XSType xsType, XSAnnotation annotation) {
+		if (isObjectReference(annotation)) {
+			return true;
+		}
+		return isObjectReference(xsType);
+	}
+
+	private boolean isObjectReference(XSAnnotation annotation) {
+		Element objRefAnnotationElement = SchemaProcessorUtil.getAnnotationElement(annotation, A_OBJECT_REFERENCE);
+		return (objRefAnnotationElement != null);
+	}
+
+	private boolean isObjectReference(XSType xsType) {
+		return SchemaProcessorUtil.hasAnnotation(xsType, A_OBJECT_REFERENCE);
+	}
+
+	/**
+	 * Returns true if provides XSD type is an object definition. It looks for a ObjectType supertype.
+	 */
+	private boolean isObjectDefinition(XSType xsType) {
+		return SchemaProcessorUtil.hasAnnotation(xsType, A_OBJECT);
+	}
+
+	/**
+	 * Creates appropriate instance of PropertyContainerDefinition.
+	 * It may be PropertyContainerDefinition itself or one of its subclasses (ResourceObjectDefinition). This method also takes care of parsing
+	 * all the annotations and similar fancy stuff.
+	 * 
+	 * We need to pass createResourceObject flag explicitly here. Because even if we are in resource schema, we want PropertyContainers inside
+	 * ResourceObjects, not ResourceObjects inside ResouceObjects.
+	 */
+	private PrismContainerDefinition<?> createPropertyContainerDefinition(XSType xsType, XSParticle elementParticle, 
+			ComplexTypeDefinition complexTypeDefinition, XSAnnotation annotation, boolean topLevel) throws SchemaException {	
+		XSTerm elementTerm = elementParticle.getTerm();
+		XSElementDecl elementDecl = elementTerm.asElementDecl();
+		
+		PrismContainerDefinition<?> pcd = createPropertyContainerDefinition(xsType, elementDecl, complexTypeDefinition, 
+				annotation, elementParticle, topLevel);
+		return pcd;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private PrismContainerDefinition<?> createPropertyContainerDefinition(XSType xsType, XSElementDecl elementDecl, 
+			ComplexTypeDefinition complexTypeDefinition, XSAnnotation complexTypeAnnotation, XSParticle elementParticle,
+			boolean topLevel) throws SchemaException {
+		
+		QName elementName = new QName(elementDecl.getTargetNamespace(), elementDecl.getName());
+		PrismContainerDefinition<?> pcd = null;
+		
+		SchemaDefinitionFactory definitionFactory = getDefinitionFactory();
+		
+		if (isObjectDefinition(xsType)) {
+			Class compileTimeClass = null;
+			if (getSchemaRegistry() != null) {
+				compileTimeClass = getSchemaRegistry().determineCompileTimeClass(elementName, complexTypeDefinition);
+			}
+			pcd = definitionFactory.createObjectDefinition(elementName, complexTypeDefinition, prismContext, 
+					compileTimeClass, complexTypeAnnotation, elementParticle);
+			// Multiplicity is fixed to a single-value here
+			pcd.setMinOccurs(1);
+			pcd.setMaxOccurs(1);
+		} else {
+			pcd = definitionFactory.createContainerDefinition(elementName, complexTypeDefinition, prismContext, 
+					complexTypeAnnotation, elementParticle);
+			setMultiplicity(pcd, elementParticle, elementDecl.getAnnotation(), topLevel);
+		}
+		
+		markRuntime(pcd);
+		
+		parseItemDefinitionAnnotations(pcd, complexTypeAnnotation);
+		parseItemDefinitionAnnotations(pcd, elementDecl.getAnnotation());
+		if (elementParticle != null) {
+			parseItemDefinitionAnnotations(pcd, elementParticle.getAnnotation());
+		}
+				
+		return pcd;
+	}
+
+	/**
+	 * Creates appropriate instance of PropertyDefinition.
+	 * It creates either PropertyDefinition itself or one of its subclasses (ResourceObjectAttributeDefinition). The behavior
+	 * depends of the "mode" of the schema. This method is also processing annotations and other fancy property-relates stuff.
+	 */
+	private <T> PrismPropertyDefinition<T> createPropertyDefinition(XSType xsType, QName elementName, QName typeName, 
+			ComplexTypeDefinition ctd, XSAnnotation annotation, XSParticle elementParticle) throws SchemaException {
+		PrismPropertyDefinition<T> propDef;
+		
+		SchemaDefinitionFactory definitionFactory = getDefinitionFactory();
+		
+		Collection<? extends DisplayableValue<T>> allowedValues= parseEnumAllowedValues(xsType);
+		
+		Object defaultValue = parseDefaultValue(elementParticle, typeName);
+		
+		propDef = definitionFactory.createPropertyDefinition(elementName, typeName, ctd, prismContext, annotation, elementParticle, allowedValues, null);
+		setMultiplicity(propDef, elementParticle, annotation, ctd == null);
+		
+		// Process generic annotations
+		parseItemDefinitionAnnotations(propDef, annotation);
+				
+		List<Element> accessElements = SchemaProcessorUtil.getAnnotationElements(annotation, A_ACCESS);
+		if (accessElements == null || accessElements.isEmpty()) {
+			// Default access is read-write-create
+			propDef.setCanAdd(true);
+			propDef.setCanModify(true);
+			propDef.setCanRead(true);
+		} else {
+			propDef.setCanAdd(false);
+			propDef.setCanModify(false);
+			propDef.setCanRead(false);
+			for (Element e : accessElements) {
+				String access = e.getTextContent();
+				if (access.equals(A_ACCESS_CREATE)) {
+					propDef.setCanAdd(true);
+				}
+				if (access.equals(A_ACCESS_UPDATE)) {
+					propDef.setCanModify(true);
+				}
+				if (access.equals(A_ACCESS_READ)) {
+					propDef.setCanRead(true);
+				}
+			}
+		}
+		
+		markRuntime(propDef);
+		
+		Element indexableElement = SchemaProcessorUtil.getAnnotationElement(annotation, A_INDEXED);
+		if (indexableElement != null) {
+			Boolean indexable = XmlTypeConverter.toJavaValue(indexableElement, Boolean.class);
+			propDef.setIndexed(indexable);
+		}
+		
+		return propDef;
+	}
+	
+	private Object parseDefaultValue(XSParticle elementParticle, QName typeName) {
+		if (elementParticle == null){
+			return null;
+		}
+		XSTerm term = elementParticle.getTerm();
+		if (term == null){
+			return null;
+		}
+		
+		XSElementDecl elementDecl = term.asElementDecl();
+		if (elementDecl == null){
+			return null;
+		}
+		if (elementDecl.getDefaultValue() != null){
+			if (XmlTypeConverter.canConvert(typeName)){
+				return XmlTypeConverter.toJavaValue(elementDecl.getDefaultValue().value, typeName);
+			}
+			return elementDecl.getDefaultValue().value;
+		}
+		return null;
+	}
+
+	private <T> Collection<? extends DisplayableValue<T>> parseEnumAllowedValues(XSType xsType){
+		if (xsType.isSimpleType()){
+			if (xsType.asSimpleType().isRestriction()){
+				XSRestrictionSimpleType restriction = xsType.asSimpleType().asRestriction();
+				List<XSFacet> enumerations = restriction.getDeclaredFacets(XSFacet.FACET_ENUMERATION);
+				List<DisplayableValueImpl<T>> enumValues = new ArrayList<DisplayableValueImpl<T>>(enumerations.size());
+				for (XSFacet facet : enumerations){
+					String value = facet.getValue().value;
+					Element descriptionE = SchemaProcessorUtil.getAnnotationElement(facet.getAnnotation(), SCHEMA_DOCUMENTATION);
+					Element appInfo = SchemaProcessorUtil.getAnnotationElement(facet.getAnnotation(), SCHEMA_APP_INFO);
+					Element valueE = null;
+					if (appInfo != null){
+						NodeList list = appInfo.getElementsByTagNameNS(PrismConstants.A_LABEL.getNamespaceURI(),
+								PrismConstants.A_LABEL.getLocalPart());
+						if (list.getLength() != 0){
+							valueE = (Element) list.item(0);
+						}
+					}
+					String label = null;
+					if (valueE != null){
+						label = valueE.getTextContent();
+					} else {
+						label = value;
+					}
+					
+					DisplayableValueImpl<T> edv = new DisplayableValueImpl(value, label, descriptionE != null ? descriptionE.getTextContent() : null);
+					
+					enumValues.add(edv);
+					
+				}
+				if (enumValues != null && !enumValues.isEmpty()){
+					return enumValues;
+				}
+				
+			}
+		}
+		return null;
+	}
+	
+	private void parseItemDefinitionAnnotations(ItemDefinition itemDef, XSAnnotation annotation) throws SchemaException {
+		if (annotation == null || annotation.getAnnotation() == null) {
+			return;
+		}
+		
+		QName elementName = itemDef.getName();
+		
+		// ignore
+		Boolean ignore = SchemaProcessorUtil.getAnnotationBooleanMarker(annotation, A_IGNORE);
+		if (ignore != null) {
+			itemDef.setIgnored(ignore);
+		}
+		
+		// deprecated
+		Boolean deprecated = SchemaProcessorUtil.getAnnotationBooleanMarker(annotation, A_DEPRECATED);
+		if (deprecated != null) {
+			itemDef.setDeprecated(deprecated);
+		}
+
+		// operational
+		Boolean operational = SchemaProcessorUtil.getAnnotationBooleanMarker(annotation, A_OPERATIONAL);
+		if (operational != null) {
+			itemDef.setOperational(operational);
+		}
+				
+		// displayName
+		Element attributeDisplayName = SchemaProcessorUtil.getAnnotationElement(annotation, A_DISPLAY_NAME);
+		if (attributeDisplayName != null) {
+			itemDef.setDisplayName(attributeDisplayName.getTextContent());
+		}
+
+		// displayOrder
+		Element displayOrderElement = SchemaProcessorUtil.getAnnotationElement(annotation, A_DISPLAY_ORDER);
+		if (displayOrderElement != null) {
+			Integer displayOrder = DOMUtil.getIntegerValue(displayOrderElement);
+			itemDef.setDisplayOrder(displayOrder);
+		}
+		
+		// help
+		Element help = SchemaProcessorUtil.getAnnotationElement(annotation, A_HELP);
+		if (help != null) {
+			itemDef.setHelp(help.getTextContent());
+		}
+
+        // documentation
+        extractDocumentation(itemDef, annotation);
+	}
+
+	private boolean isDeprecated(XSElementDecl xsElementDecl) throws SchemaException {
+		XSAnnotation annotation = xsElementDecl.getAnnotation();
+		Boolean deprecated = SchemaProcessorUtil.getAnnotationBooleanMarker(annotation, A_DEPRECATED);
+		return (deprecated != null && deprecated);
+	}
+
+	private boolean containsAccessFlag(String flag, List<Element> accessList) {
+		for (Element element : accessList) {
+			if (flag.equals(element.getTextContent())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private XSAnnotation selectAnnotationToUse(XSAnnotation particleAnnotation, XSAnnotation termAnnotation) {
+		boolean useParticleAnnotation = false;
+		if (particleAnnotation != null && particleAnnotation.getAnnotation() != null) {
+			if (testAnnotationAppinfo(particleAnnotation)) {
+				useParticleAnnotation = true;
+			}
+		}
+
+		boolean useTermAnnotation = false;
+		if (termAnnotation != null && termAnnotation.getAnnotation() != null) {
+			if (testAnnotationAppinfo(termAnnotation)) {
+				useTermAnnotation = true;
+			}
+		}
+
+		if (useParticleAnnotation) {
+			return particleAnnotation;
+		}
+
+		if (useTermAnnotation) {
+			return termAnnotation;
+		}
+
+		return null;
+	}
+
+	private boolean testAnnotationAppinfo(XSAnnotation annotation) {
+		Element appinfo = SchemaProcessorUtil.getAnnotationElement(annotation, new QName(W3C_XML_SCHEMA_NS_URI, "appinfo"));
+		if (appinfo != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private void markRuntime(Definition def) {
+		if (isRuntime) {
+			def.setRuntimeSchema(true);
+		}
+	}
+	
+
+	
+}

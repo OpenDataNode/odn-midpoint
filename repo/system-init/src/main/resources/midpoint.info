@@ -1,0 +1,8 @@
+midpoint.version=${project.version}
+midpoint.build=${describe}
+midpoint.branch=${scmBranch}
+midpoint.timestamp=${timestamp}
+midpoint.scm=${project.scm.connection}
+midpoint.jira=${project.issueManagement.url}
+midpoint.lincence=Apache License 2.0
+
