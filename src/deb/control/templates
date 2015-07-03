@@ -1,0 +1,10 @@
+Template: odn-midpoint/pgsql_db_user
+Type: string
+Default: administrator
+Description: Postgres user for midPoint
+
+Template: odn-midpoint/pgsql_db_password
+Type: password
+Default: 5ecr3t
+Description: Postgres user password for midPoint
+ 
