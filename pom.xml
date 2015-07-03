@@ -20,7 +20,7 @@
 	<groupId>eu.comsode.idm</groupId>
 	<artifactId>odn-midpoint</artifactId>
 	<packaging>war</packaging>
-	<version>3.1.1</version>
+	<version>3.4</version>
 
 	<scm>
 		<connection>https://github.com/Evolveum/midpoint.git</connection>
@@ -139,8 +139,8 @@
 								<configuration>
 									<target>
 										<!-- move  WEB-INF/web.xml to WEB-INF/web_default.xml  WEB-INF/web.xml. Simbolic link will be created web.xml -> web_default.xml -->
-										<move file="${project.build.directory}/midpoint/WEB-INF/web.xml" tofile="${project.build.directory}/midpoint/WEB-INF/web_default.xml"/>
-										<move file="${project.build.directory}/midpoint/WEB-INF/ctx-web-security.xml" tofile="${project.build.directory}/midpoint/WEB-INF/ctx-web-security_default.xml"/>
+										<move file="${project.build.directory}/midpoint/WEB-INF/web.xml" tofile="${project.build.directory}/midpoint/WEB-INF/web_default.xml" />
+										<move file="${project.build.directory}/midpoint/WEB-INF/ctx-web-security.xml" tofile="${project.build.directory}/midpoint/WEB-INF/ctx-web-security_default.xml" />
 									</target>
 								</configuration>
 								<goals>
