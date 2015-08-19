@@ -161,7 +161,7 @@
 								</goals>
 								<configuration>
 									<!-- set name of package -->
-									<deb>${project.build.directory}/odn-midpoint_all.deb</deb>
+									<deb>${project.build.directory}/odn-midpoint_${debian_package.version}_all.deb</deb>
 									<dataSet>
 										<!-- copy  etc/ -->
 										<data>
