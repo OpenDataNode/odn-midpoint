@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<objects xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
-	xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
-	xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3">
-	<user xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+<user xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
       xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3"
       xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3"
       xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
@@ -23,13 +20,12 @@
                    type="tns:UserType"><!-- casadmin --></modifierRef>
       <modifyChannel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#user</modifyChannel>
    </metadata>
-   	<c:assignment>
-        <c:targetRef oid="00000000-0000-0000-0000-000000000004" type="c:RoleType"/>
-    </c:assignment>
+   <assignment>
+      <targetRef oid="00000000-0000-0000-0000-000000000004" type="c:RoleType"><!-- Superuser --></targetRef>
+   </assignment>
    <activation>
       <administrativeStatus>enabled</administrativeStatus>
       <effectiveStatus>enabled</effectiveStatus>
-      <enableTimestamp>2015-09-22T13:10:18.841+02:00</enableTimestamp>
    </activation>
    <iteration>0</iteration>
    <iterationToken/>
@@ -38,12 +34,11 @@
    <familyName>Administrator</familyName>
    <emailAddress>admin@comsode.eu</emailAddress>
    <organization>comsode</organization>
-     <c:credentials xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3">
-        <c:password>
-            <c:value>
-         		<t:clearValue>5ecr3t</t:clearValue>
-         	</c:value>
-        </c:password>
-    </c:credentials>
+   <credentials>
+      <password>
+         <value>
+            <clearValue>5ecr3t</clearValue>
+         </value>
+      </password>
+   </credentials>
 </user>
-</objects>
