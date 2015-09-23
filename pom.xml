@@ -93,13 +93,11 @@
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-integration-tomcat-v7</artifactId>
 			<version>3.3.3</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-core</artifactId>
 			<version>3.3.3</version>
-			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<artifactId>xercesImpl</artifactId>
@@ -120,11 +118,6 @@
 			<artifactId>spring-security-cas</artifactId>
 			<version>3.2.5.RELEASE</version>
 		</dependency>
-		<!--dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency -->
 	</dependencies>
 
 
