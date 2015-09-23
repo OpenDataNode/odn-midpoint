@@ -91,6 +91,12 @@
             <groupId>com.evolveum.polygon</groupId>
             <artifactId>connector-ldap</artifactId>
      		<version>1.4.0.49</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 		<!-- Uncomment following if you want midpoint to be a part of SSO using CAS server-->
 		<!-- SSO CAS Client dependencies -->
