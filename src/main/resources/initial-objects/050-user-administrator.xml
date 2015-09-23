@@ -1,61 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) 2010-2014 Evolveum
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-<c:user oid="00000000-0000-0000-0000-000000000002"
-        xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
-        xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3">
-    <c:name>
-        <t:orig>administrator</t:orig>
-        <t:norm>administrator</t:norm>
-    </c:name>
-    <c:fullName>
-        <t:orig>fero midPoint Administrator</t:orig>
-        <t:norm>fero midpoint administrator</t:norm>
-    </c:fullName>
-    <c:givenName>
-        <t:orig>midPoint</t:orig>
-        <t:norm>midpoint</t:norm>
-    </c:givenName>
-    <c:familyName>
-        <t:orig>Administrator</t:orig>
-        <t:norm>administrator</t:norm>
-    </c:familyName>
-	<c:emailAddress>
-		<t:orig>admin@comsode.eu</t:orig>
-		<t:norm>admin@comsode.eu</t:norm>
-	</c:emailAddress>
-	<c:organization>
-		<t:orig>comsode</t:orig>
-		<t:norm>comsode</t:norm>
-	</c:organization>
-	<c:organizationalUnit>
-		<t:orig>comsode</t:orig>
-		<t:norm>comsode</t:norm>
-	</c:organizationalUnit>
-	<c:assignment>
+<objects xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+	xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+	xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3">
+	<user xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+      xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3"
+      xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3"
+      xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+      xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"
+      xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3"
+      oid="00000000-0000-0000-0000-000000000002"
+      version="4">
+   <name>administrator</name>
+   <extension xmlns:gen415="http://midpoint.evolveum.com/xml/ns/custom/opendata/ext">
+      <gen415:role>admin</gen415:role>
+   </extension>
+   <metadata>
+      <createTimestamp>2015-09-22T13:10:18.585+02:00</createTimestamp>
+      <createChannel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#init</createChannel>
+      <modifyTimestamp>2015-09-23T11:25:27.070+02:00</modifyTimestamp>
+      <modifierRef xmlns:tns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+                   oid="11111111-0000-0000-0000-000000000001"
+                   type="tns:UserType"><!-- casadmin --></modifierRef>
+      <modifyChannel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#user</modifyChannel>
+   </metadata>
+   	<c:assignment>
         <c:targetRef oid="00000000-0000-0000-0000-000000000004" type="c:RoleType"/>
     </c:assignment>
-    <c:activation>
-        <c:administrativeStatus>enabled</c:administrativeStatus>
-    </c:activation>
-    <c:credentials xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3">
+   <activation>
+      <administrativeStatus>enabled</administrativeStatus>
+      <effectiveStatus>enabled</effectiveStatus>
+      <enableTimestamp>2015-09-22T13:10:18.841+02:00</enableTimestamp>
+   </activation>
+   <iteration>0</iteration>
+   <iterationToken/>
+   <fullName>midPoint Administrator</fullName>
+   <givenName>midPoint</givenName>
+   <familyName>Administrator</familyName>
+   <emailAddress>admin@comsode.eu</emailAddress>
+   <organization>comsode</organization>
+     <c:credentials xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3">
         <c:password>
             <c:value>
          		<t:clearValue>5ecr3t</t:clearValue>
          	</c:value>
         </c:password>
     </c:credentials>
-</c:user>
+</user>
+</objects>
