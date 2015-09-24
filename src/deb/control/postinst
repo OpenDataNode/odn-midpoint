@@ -61,7 +61,7 @@ db_configure() {
     usrname="$2"
     pass="$3"
     version="$4"
-    
+    UPGRADE="upgrade"
     CHK_PG_DB=$(su - postgres -c "psql -t -c \"select count(1) from pg_catalog.pg_database where datname = '${dbname}'\"")
     CHK_PG_USER=$(su - postgres -c "psql -t -c \"select count(1) from pg_user where usename = '${usrname}'\"")
 
