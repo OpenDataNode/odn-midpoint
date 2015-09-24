@@ -83,22 +83,22 @@ db_configure() {
         echo " Done" 
     fi
     
-    ret=`dpkg --compare-versions "${version}" lt "3.3"`
-    # version lt 3.3
-    if [ ${#version} -gt  0 ] && [ ! "$ret"  ] ; then
-        echo -n "INFO: Updating PostgreSQL database..."
+    ret=`dpkg --compare-versions "${version}" lt "3.3"  > /dev/null 2>&1 && echo $UPGRADE` || true
+    if [ "$ret" = "$UPGRADE" ] ; then
+        echo -n "INFO: Updating PostgreSQL database 3.3 ..."
         su - postgres -c "psql -d ${dbname}" <  /usr/share/odn-midpoint/db/pgsql/postgresql-upgrade-3.1-3.1.1.sql
-        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${usrname};\"" 
-        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${usrname};\"" 
+        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${usrname};\""
+        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${usrname};\""
     fi
-    
-    ret=`dpkg --compare-versions "${version}" lt "3.4-odn1.2.0"`
+
+
+    ret=`dpkg --compare-versions "${version}" lt "3.4-odn1.2.0" > /dev/null 2>&1 && echo $UPGRADE` || true
     # version lt 3.4-odn1.2.0
-    if [ ${#version} -gt  0 ] && [ ! "$ret"  ] ; then
-        echo -n "INFO: Updating PostgreSQL database..."
+    if [ "$ret" = "$UPGRADE" ] ; then
+        echo -n "INFO: Updating PostgreSQL database 3.4 ..."
         su - postgres -c "psql -d ${dbname}" <  /usr/share/odn-midpoint/db/pgsql/postgresql-upgrade-3.1.1-3.2.sql
-        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${usrname};\"" 
-        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${usrname};\"" 
+        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${usrname};\""
+        su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${usrname};\""
     fi
     
     # update config
