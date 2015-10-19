@@ -48,7 +48,7 @@
 			<plugin>
 				<groupId>com.evolveum.midpoint.gui</groupId>
 				<artifactId>admin-gui</artifactId>
-				<version>3.2</version>
+				<version>3.3-SNAPSHOT</version>
 				<configuration>
 					<warName>midpoint</warName>    
 					<overlays>
