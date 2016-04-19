@@ -101,7 +101,7 @@ db_configure() {
         su - postgres -c "psql -q -d ${dbname} -c \"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${usrname};\""
     fi
      
-    ret=`dpkg --compare-versions "${version}" lt "3.4-odn1.2.1" > /dev/null 2>&1 && echo $UPGRADE` || true
+    ret=`dpkg --compare-versions "${version}" lt "3.4-odn1.2.2" > /dev/null 2>&1 && echo $UPGRADE` || true
     # version lt 3.4-odn1.2.1
     if [ "$ret" = "$UPGRADE" ] ; then
         echo -n "INFO: Updating PostgreSQL database 3.4 ..."
