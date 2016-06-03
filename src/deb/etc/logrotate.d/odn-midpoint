@@ -1,0 +1,8 @@
+/var/log/odn-midpoint/* {
+  copytruncate
+  weekly
+  rotate 52
+  compress
+  missingok
+  create 640 odn-midpoint nogroup
+}
