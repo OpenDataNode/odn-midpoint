@@ -1,4 +1,4 @@
-/var/log/odn-midpoint/* {
+/var/log/odn-midpoint/catalina.out {
   copytruncate
   weekly
   rotate 52
